@@ -25,7 +25,6 @@ export function handleOnMouseDown(e) {
   setClickStart({ x: e.clientX, y: e.clientY })
   setClickEnd({ x: e.clientX, y: e.clientY })
 
-
   setIsCapture(true)
 
 }

@@ -5,7 +5,7 @@ import History from "@/shared/components/history/History"
 import Toolbar from "@/shared/components/toolbar/Toolbar"
 
 export default function Overlay() {
-  const { isCapture, clickStart, clickEnd, ocrHistory  } = useAppStore()
+  const { isCapture, clickStart, clickEnd, ocrHistory } = useAppStore()
 
   const rect = {
     left: Math.min(clickStart.x, clickEnd.x),
