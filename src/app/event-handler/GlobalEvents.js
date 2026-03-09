@@ -13,7 +13,6 @@ export async function handleOnKeyDown(e) {
     const window = getCurrentWindow()
     await window.hide()
   }
-
 }
 
 export function handleOnMouseDown(e) {
@@ -26,7 +25,6 @@ export function handleOnMouseDown(e) {
   setClickEnd({ x: e.clientX, y: e.clientY })
 
   setIsCapture(true)
-
 }
 
 export function handleOnMouseMove(e) {
@@ -43,7 +41,7 @@ export async function handleOnMouseUp(e, rect) {
   if (!isCapture) return
 
   if (rect.height < 10 || rect.width < 30) {
-    showToast({ message: 'Unidentified text', type: 'error' })
+    showToast({ message: 'No text found in area', type: 'error' })
     setClickEnd({ x: e.clientX, y: e.clientY })
     setIsCapture(false)
     return
@@ -59,11 +57,14 @@ export async function handleOnMouseUp(e, rect) {
 
   try {
     const text = await ocrService(rect, ocrOptions)
+
     showToast({ message: 'Text copied', type: 'success' })
     setOcrHistory([{ id: Date.now(), text }, ...ocrHistory])
+
   } catch (err) {
     console.error("OCR failed:", err)
-    showToast({ message: 'OCR failed', type: 'error' })
+    const errorMessage = err.message === "EMPTY_OCR_RESULT" ? 'No text found in area' : 'OCR failed';
+    showToast({ message: errorMessage, type: 'error' })
   }
 }
 

@@ -35,6 +35,10 @@ export async function ocrService(rect, options = {}) {
       config
     })
 
+    if (!text || text.trim().length === 0) {
+      throw new Error("EMPTY_OCR_RESULT");
+    }
+
     if (options.copyToClipboard !== false) {
       await writeText(text)
     }
