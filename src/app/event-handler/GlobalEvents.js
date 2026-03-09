@@ -42,6 +42,13 @@ export async function handleOnMouseUp(e, rect) {
 
   if (!isCapture) return
 
+  if (rect.height < 10 || rect.width < 30) {
+    showToast({ message: 'Unidentified text', type: 'error' })
+    setClickEnd({ x: e.clientX, y: e.clientY })
+    setIsCapture(false)
+    return
+  }
+
   setClickEnd({ x: e.clientX, y: e.clientY })
   setIsCapture(false)
 
@@ -52,14 +59,12 @@ export async function handleOnMouseUp(e, rect) {
 
   try {
     const text = await ocrService(rect, ocrOptions)
-
     showToast({ message: 'Text copied', type: 'success' })
     setOcrHistory([{ id: Date.now(), text }, ...ocrHistory])
   } catch (err) {
     console.error("OCR failed:", err)
     showToast({ message: 'OCR failed', type: 'error' })
   }
-
 }
 
 export async function handleWindowBlur(focused) {

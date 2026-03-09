@@ -7,7 +7,6 @@ export function handleEventsOnTrayIcon(event) {
   if (type === 'Click' && button === 'Left') {
     handleInitCapture(event)
   }
-
 }
 
 export async function handleInitCapture(e) {

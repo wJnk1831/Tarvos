@@ -15,7 +15,6 @@ export async function createTray() {
         id: 'exit',
         text: 'exit',
         action: (e) => handleFinishApp(e),
-
       },
     ],
   })
