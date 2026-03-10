@@ -14,7 +14,7 @@ export default function History() {
   }
 
   return (
-    <div className="mr-4 mb-3 self-end z-50 flex flex-col items-end">
+    <div className="mr-4 mb-3 self-end z-50 flex flex-col items-end cursor-default">
       <div className="w-[280px] flex flex-col items-stretch">
         <button
           onClick={() => setToggleHistoryModal(!toggleHistoryModal)}
