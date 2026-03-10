@@ -3,7 +3,8 @@
   "identifier": "default",
   "description": "basic",
   "windows": [
-    "main"
+    "main",
+    "toast-window"
   ],
   "permissions": [
     "core:path:default",
@@ -33,6 +34,8 @@
     "core:webview:allow-webview-close",
     "core:webview:allow-webview-show",
     "core:webview:allow-webview-position",
-    "core:window:allow-create"
+    "core:window:allow-create",
+    "core:window:allow-set-size",
+    "core:window:allow-set-position"
   ]
 }
