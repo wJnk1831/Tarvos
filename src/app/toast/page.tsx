@@ -1,7 +1,7 @@
 'use client'
 
 import { Suspense } from 'react'
-import { Toast } from '@/shared/components/toast/Toast'
+import { Toast } from './components/Toast'
 
 export default function ToastPage() {
   return (
