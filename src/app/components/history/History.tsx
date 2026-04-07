@@ -27,9 +27,9 @@ export default function History() {
 
         {toggleHistoryModal && (
           <div className="mt-2 w-full max-h-65 overflow-auto rounded-xl bg-neutral-900/80 backdrop-blur border border-neutral-700/60 shadow-[0_0_30px_rgba(0,0,0,0.6)] p-3 flex flex-col gap-3 scrollbar-primary">
-            {ocrHistory.length === 0 ? (
-              <p className="text-xs text-neutral-500 text-center py-2">No history yet</p>
-            ) : (
+            {ocrHistory.length === 0 && <p className="text-xs text-neutral-500 text-center py-2">No history yet</p>}
+
+            {ocrHistory.length > 0 && (
               ocrHistory.map((data) => (
                 <div key={data.id} onClick={() => handleCopyTextToClipboard(data.text, data.id)} className="relative cursor-pointer rounded-lg border border-neutral-800 bg-neutral-900 p-3 text-sm text-neutral-200 hover:border-orange-500/40 hover:bg-neutral-800/60 transition">
                   {copiedId === data.id && (
@@ -41,6 +41,7 @@ export default function History() {
                 </div>
               ))
             )}
+
           </div>
         )}
       </div>
