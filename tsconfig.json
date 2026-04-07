@@ -36,7 +36,7 @@
     "**/*.tsx",
     "**/*.js",
     ".next/dev/types/**/*.ts"
-  ],
+, "src/app/components/history/History.tsx"  ],
   "exclude": [
     "node_modules"
   ]

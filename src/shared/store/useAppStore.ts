@@ -1,6 +1,29 @@
+import { HistoryItem, OcrOptions } from "@/types/OcrTypes"
 import { create } from "zustand"
 
-export const useAppStore = create((set) => ({
+interface Point {
+  x: number
+  y: number
+}
+
+interface AppState {
+  isCapture: boolean
+  clickStart: Point
+  clickEnd: Point
+  ocrOptions: OcrOptions
+  ocrHistory: HistoryItem[]
+  isWindowFocused: boolean
+  toggleHistoryModal: boolean
+
+  setIsCapture: (value: boolean) => void
+  setClickStart: (value: Point) => void
+  setClickEnd: (value: Point) => void
+  setOcrOptions: (value: OcrOptions) => void
+  setOcrHistory: (value: HistoryItem[]) => void
+  setToggleHistoryModal: (value: boolean) => void
+}
+
+export const useAppStore = create<AppState>((set) => ({
   isCapture: false,
   clickStart: { x: 0, y: 0 },
   clickEnd: { x: 0, y: 0 },

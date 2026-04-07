@@ -24,3 +24,9 @@ export interface OcrOptions {
   copyToClipboard?: boolean
   saveToHistory?: boolean
 }
+
+export interface HistoryItem {
+  id: string | number
+  text: string
+  timestamp?: number
+}
