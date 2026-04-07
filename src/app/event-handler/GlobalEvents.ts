@@ -28,7 +28,7 @@ export function handleOnMouseDown(e) {
 }
 
 export function handleOnMouseMove(e) {
-  const { isCapture, setClickStart, setClickEnd } = useAppStore.getState()
+  const { isCapture, setClickEnd } = useAppStore.getState()
 
   if (isCapture) {
     setClickEnd({ x: e.clientX, y: e.clientY })
