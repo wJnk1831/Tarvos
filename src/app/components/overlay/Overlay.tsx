@@ -1,8 +1,8 @@
 'use client'
 import { handleOnMouseDown, handleOnMouseMove, handleOnMouseUp } from "@/app/event-handler/GlobalEvents"
 import { useAppStore } from "@/shared/store/useAppStore"
-import History from "@/shared/components/history/History"
-import Toolbar from "@/shared/components/toolbar/Toolbar"
+import History from "@/app/components/history/History"
+import Toolbar from "@/app/components/toolbar/Toolbar"
 
 export default function Overlay() {
   const { isCapture, clickStart, clickEnd, ocrHistory } = useAppStore()

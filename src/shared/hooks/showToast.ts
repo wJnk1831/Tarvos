@@ -1,4 +1,4 @@
-import { ToastMessage, ToastOptions } from '@/types/toast'
+import { ToastMessage, ToastOptions } from '@/types/ToastTypes'
 import { WebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { primaryMonitor } from '@tauri-apps/api/window'
 

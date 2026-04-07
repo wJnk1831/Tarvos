@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { LogicalSize, LogicalPosition } from '@tauri-apps/api/dpi'
 import { primaryMonitor } from '@tauri-apps/api/window'
-import { ToastMessage, ToastType } from '@/types/toast'
+import { ToastMessage, ToastType } from '@/types/ToastTypes'
 
 const TYPE_STYLES: Record<ToastType, string> = {
   main: 'bg-main',
