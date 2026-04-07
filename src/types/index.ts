@@ -11,5 +11,3 @@ export interface SelectionArea {
   width: number
   height: number
 }
-
-export type ToastType = 'success' | 'error' | 'info' | 'warning'

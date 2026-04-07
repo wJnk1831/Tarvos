@@ -1,29 +1,29 @@
-import { TrayIcon } from '@tauri-apps/api/tray'
+import { TrayIcon, TrayIconEvent } from '@tauri-apps/api/tray'
 import { Menu } from '@tauri-apps/api/menu'
 import { defaultWindowIcon } from '@tauri-apps/api/app'
 import { handleEventsOnTrayIcon, handleFinishApp, handleInitCapture } from './trayEvents'
 
-export async function createTray() {
+export async function createTray(): Promise<TrayIcon> {
   const menu = await Menu.new({
     items: [
       {
         id: 'capture',
-        text: 'get text',
-        action: (e) => handleInitCapture(e),
+        text: 'Get Text',
+        action: () => handleInitCapture(),
       },
       {
         id: 'exit',
-        text: 'exit',
-        action: (e) => handleFinishApp(e),
+        text: 'Exit',
+        action: () => handleFinishApp(),
       },
     ],
   })
 
   const tray = await TrayIcon.new({
-    icon: await defaultWindowIcon(),
+    icon: await defaultWindowIcon() as any,
     menu,
     menuOnLeftClick: false,
-    action: (e) => handleEventsOnTrayIcon(e),
+    action: (e: TrayIconEvent) => handleEventsOnTrayIcon(e),
   })
 
   return tray
