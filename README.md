@@ -69,13 +69,13 @@ cd tarvos
 npm install
 
 # Execute em modo desenvolvimento
-npm run tauri dev
+npx run tauri dev
 ```
 
 ### Build para Produção
 
 ```bash
-npm run tauri build
+npx run tauri build
 ```
 
 ## Estrutura do Projeto
