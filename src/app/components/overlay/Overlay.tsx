@@ -18,6 +18,7 @@ export default function Overlay() {
     <div onMouseDown={handleOnMouseDown} onMouseMove={handleOnMouseMove} onMouseUp={(e) => handleOnMouseUp(e, rect)}
       className="inset-0 cursor-crosshair w-screen h-screen select-none flex flex-col justify-between ">
       {!isCapture && <Toolbar />}
+
       {!isCapture && <div className="overlay absolute inset-0 bg-black/30" />}
 
       {isCapture && (
@@ -26,7 +27,7 @@ export default function Overlay() {
           style={{
             left: rect.left,
             top: rect.top,
-            width: rect.width,
+            width: rect.width,  
             height: rect.height,
             boxShadow: '0 0 0 9999px rgba(0,0,0,0.30)',
           }}
