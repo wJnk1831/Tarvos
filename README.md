@@ -58,7 +58,7 @@ Tarvos é um aplicativo desktop que permite selecionar qualquer região da tela 
 
 ```bash
 # Clone o repositório
-git clone https://github.com/seu-usuario/tarvos.git
+git clone https://github.com/wJnk1831/Tarvos.git
 cd tarvos
 
 # Instale as dependências
