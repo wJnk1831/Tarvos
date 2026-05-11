@@ -7,13 +7,14 @@ fn main() {
     configure_dev_webview_runtime();
 
     tauri::Builder::default()
+        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {}))
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
-        .plugin(tauri_plugin_clipboard_manager::init()) 
+        .plugin(tauri_plugin_clipboard_manager::init())
         .invoke_handler(tauri::generate_handler![commands::capture_and_ocr])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

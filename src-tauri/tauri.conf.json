@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "Tarvos",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "identifier": "com.tarvos.app",
   "build": {
     "frontendDist": "../out",
