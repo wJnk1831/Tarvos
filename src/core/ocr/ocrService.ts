@@ -2,20 +2,28 @@ import { OcrConfig, OcrOptions, SelectionRect } from "@/types/OcrTypes"
 import { invoke } from "@tauri-apps/api/core"
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 
-const DEFAULT_CONFIG: OcrOptions = {
-  languages: ['eng'],
+const DEFAULT_OUTPUT_FORMAT = {
   preserveLineBreaks: true,
   trimWhitespace: false,
   removeExtraSpaces: false,
 }
 
 export async function ocrService(rect: SelectionRect, options: Partial<OcrOptions> = {}): Promise<string> {
+  
+  let languages: string[];
+  if (options.languages && options.languages.length > 0) {
+    languages = options.languages;
+  } else {
+    const sysLang = await invoke<string>("get_system_language_cmd");
+    languages = [sysLang];
+  }
+
   const config: OcrConfig = {
-    languages: options.languages || DEFAULT_CONFIG.languages,
+    languages,
     output_format: {
-      preserve_line_breaks: options.preserveLineBreaks ?? DEFAULT_CONFIG.preserveLineBreaks,
-      trim_whitespace: options.trimWhitespace ?? DEFAULT_CONFIG.trimWhitespace,
-      remove_extra_spaces: options.removeExtraSpaces ?? DEFAULT_CONFIG.removeExtraSpaces,
+      preserve_line_breaks: options.preserveLineBreaks ?? DEFAULT_OUTPUT_FORMAT.preserveLineBreaks,
+      trim_whitespace: options.trimWhitespace ?? DEFAULT_OUTPUT_FORMAT.trimWhitespace,
+      remove_extra_spaces: options.removeExtraSpaces ?? DEFAULT_OUTPUT_FORMAT.removeExtraSpaces,
     }
   }
 

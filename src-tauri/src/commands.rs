@@ -35,6 +35,49 @@ impl Default for OcrConfig {
     }
 }
 
+fn get_system_language() -> String {
+    // Tenta obter o locale do sistema através de variáveis de ambiente
+    let lang_vars = ["LANG", "LC_ALL", "LC_MESSAGES", "LANGUAGE"];
+    
+    for var in &lang_vars {
+        if let Ok(value) = env::var(var) {
+            let lang = value.split('.').next().unwrap_or(&value).to_lowercase();
+            return map_locale_to_tesseract(&lang);
+        }
+    }
+
+    // Fallback: verificar variável de ambiente do Windows
+    #[cfg(target_os = "windows")]
+    {
+        if let Ok(value) = env::var("SYSTEM_LANG") {
+            return map_locale_to_tesseract(&value.to_lowercase());
+        }
+        // Padrão para inglês se não conseguir detectar
+        return "eng".to_string();
+    }
+
+    #[cfg(not(target_os = "windows"))]
+    {
+        "eng".to_string()
+    }
+}
+
+fn map_locale_to_tesseract(locale: &str) -> String {
+    match locale {
+        // Português (inclui pt_BR, pt_PT, etc)
+        l if l.starts_with("pt") => "por".to_string(),
+        // Inglês (inclui en_US, en_GB, etc)
+        l if l.starts_with("en") => "eng".to_string(),
+        // Qualquer outro idioma → inglês (fallback)
+        _ => "eng".to_string(),
+    }
+}
+
+#[command]
+pub fn get_system_language_cmd() -> String {
+    get_system_language()
+}
+
 #[command]
 pub fn capture_and_ocr(
     app: tauri::AppHandle,
@@ -44,7 +87,13 @@ pub fn capture_and_ocr(
     height: u32,
     config: Option<OcrConfig>,
 ) -> Result<String, String> {
-    let config = config.unwrap_or_default();
+    let mut config = config.unwrap_or_default();
+    
+    // Se languages estiver vazio ou contém apenas o default 'eng', usa idioma do sistema
+    if config.languages.is_empty() || (config.languages.len() == 1 && config.languages[0] == "eng") {
+        let system_lang = get_system_language();
+        config.languages = vec![system_lang];
+    }
 
     let (tesseract_path, tessdata_path) = if cfg!(debug_assertions) {
         (

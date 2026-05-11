@@ -15,7 +15,7 @@ fn main() {
         .plugin(tauri_plugin_process::init())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_clipboard_manager::init())
-        .invoke_handler(tauri::generate_handler![commands::capture_and_ocr])
+        .invoke_handler(tauri::generate_handler![commands::capture_and_ocr, commands::get_system_language_cmd])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
