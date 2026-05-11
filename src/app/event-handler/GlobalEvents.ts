@@ -5,6 +5,7 @@ import { ocrService } from "@/core/ocr/ocrService";
 import { showToast } from "@/shared/hooks/showToast";
 
 export async function handleOnKeyDown(e) {
+
   if (e.code === 'Tab') {
     e.preventDefault()
   }
@@ -14,6 +15,7 @@ export async function handleOnKeyDown(e) {
     await window.hide()
   }
 }
+
 
 export function handleOnMouseDown(e) {
   const { setIsCapture, setClickStart, setClickEnd } = useAppStore.getState()

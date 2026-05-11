@@ -1,6 +1,5 @@
 'use client'
 
-import { useState } from "react"
 import { useAppStore } from "@/shared/store/useAppStore"
 
 interface LanguageOption {
@@ -14,14 +13,13 @@ const LANGUAGES: LanguageOption[] = [
 ]
 
 export default function Toolbar() {
-  const [toggleMenu, setToggleMenu] = useState<boolean>(false)
-  const { selectedLanguage, setSelectedLanguage, ocrOptions, setOcrOptions } = useAppStore()
+  const { toolbarMenuOpen, setToolbarMenuOpen, selectedLanguage, setSelectedLanguage, ocrOptions, setOcrOptions } = useAppStore()
 
   return (
     <div className="cursor-default self-end p-4 z-50 flex flex-col items-end gap-2">
-      <button onClick={() => setToggleMenu(!toggleMenu)} className="btn-glass-secondary">Config</button>
+      <button onClick={() => setToolbarMenuOpen(!toolbarMenuOpen)} className="btn-glass-secondary">Config</button>
 
-      {toggleMenu && (
+      {toolbarMenuOpen && (
         <div className="mt-2 rounded-xl bg-neutral-900/80 backdrop-blur border border-neutral-700/60 p-4 flex flex-col gap-6 text-sm text-neutral-200 shadow-2xl">
 
           <div className="flex flex-col gap-2">

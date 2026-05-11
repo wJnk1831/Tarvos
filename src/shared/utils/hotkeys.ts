@@ -1,5 +1,6 @@
 import { getCurrentWindow } from "@tauri-apps/api/window"
 import { register } from "@tauri-apps/plugin-global-shortcut"
+import { useAppStore } from "../store/useAppStore"
 
 let registeredShortcuts = []
 
@@ -24,6 +25,9 @@ export async function registerHideHotkey(shortcut = 'Escape') {
 }
 
 async function handleOpenApp() {
+  const { setToolbarMenuOpen, setToggleHistoryModal } = useAppStore.getState()
+  setToolbarMenuOpen(false)
+  setToggleHistoryModal(false)
   const window = getCurrentWindow()
   await window.show()
   await window.setFullscreen(true)

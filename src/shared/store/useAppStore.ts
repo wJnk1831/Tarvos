@@ -16,6 +16,7 @@ interface AppState {
   ocrHistory: HistoryItem[]
   isWindowFocused: boolean
   toggleHistoryModal: boolean
+  toolbarMenuOpen: boolean
 
   setIsCapture: (value: boolean) => void
   setClickStart: (value: Point) => void
@@ -25,6 +26,7 @@ interface AppState {
   setOcrOptions: (value: OcrOptions) => void
   setOcrHistory: (value: HistoryItem[]) => void
   setToggleHistoryModal: (value: boolean) => void
+  setToolbarMenuOpen: (value: boolean) => void
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -44,26 +46,28 @@ export const useAppStore = create<AppState>((set, get) => ({
   ocrHistory: [],
   isWindowFocused: true,
   toggleHistoryModal: false,
+  toolbarMenuOpen: false,
 
   setIsCapture: (value) => set({ isCapture: value }),
   setClickStart: (value) => set({ clickStart: value }),
   setClickEnd: (value) => set({ clickEnd: value }),
-  setSystemLanguage: (value) => set({
+  setSystemLanguage: (value) => set({ 
     systemLanguage: value,
     selectedLanguage: get().selectedLanguage === 'eng' ? value : get().selectedLanguage,
-    ocrOptions: {
-      ...get().ocrOptions,
-      languages: [value]
+    ocrOptions: { 
+      ...get().ocrOptions, 
+      languages: [value] 
     }
   }),
-  setSelectedLanguage: (value) => set({
+  setSelectedLanguage: (value) => set({ 
     selectedLanguage: value,
-    ocrOptions: {
-      ...get().ocrOptions,
-      languages: [value]
+    ocrOptions: { 
+      ...get().ocrOptions, 
+      languages: [value] 
     }
   }),
   setOcrOptions: (value) => set({ ocrOptions: value }),
   setOcrHistory: (value) => set({ ocrHistory: value }),
   setToggleHistoryModal: (value) => set({ toggleHistoryModal: value }),
+  setToolbarMenuOpen: (value) => set({ toolbarMenuOpen: value }),
 }))
