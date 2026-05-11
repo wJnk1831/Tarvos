@@ -49,6 +49,7 @@ export default function ToastPage() {
     const container = document.getElementById('toast-container')
     if (container) observer.observe(container)
     return () => observer.disconnect()
+    // eslint-disable-next-line react-hooks/exhaustive-deps 
   }, [messages])
 
   useEffect(() => {

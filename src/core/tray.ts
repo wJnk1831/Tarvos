@@ -21,7 +21,7 @@ export async function createTray(): Promise<TrayIcon> {
   })
 
   const tray = await TrayIcon.new({
-    icon: await defaultWindowIcon() as any,
+    icon: await defaultWindowIcon() ?? undefined,
     menu,
     menuOnLeftClick: false,
     action: (e: TrayIconEvent) => handleEventsOnTrayIcon(e),

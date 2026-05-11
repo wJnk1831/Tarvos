@@ -7,13 +7,31 @@ interface LanguageOption {
   label: string
 }
 
+interface OutputOption {
+  id: keyof Pick<import('@/types').OcrOptions, 'preserveLineBreaks' | 'trimWhitespace' | 'removeExtraSpaces'>
+  label: string
+}
+
 const LANGUAGES: LanguageOption[] = [
   { value: 'eng', label: 'English' },
   { value: 'por', label: 'Português' },
 ]
 
+const OUTPUT_OPTIONS: OutputOption[] = [
+  { id: 'preserveLineBreaks', label: 'Preserve line breaks' },
+  { id: 'trimWhitespace', label: 'Trim whitespace' },
+  { id: 'removeExtraSpaces', label: 'Remove extra spaces' },
+]
+
 export default function Toolbar() {
   const { toolbarMenuOpen, setToolbarMenuOpen, selectedLanguage, setSelectedLanguage, ocrOptions, setOcrOptions } = useAppStore()
+
+  const handleOutputChange = (optId: OutputOption['id']) => {
+    setOcrOptions({
+      ...ocrOptions,
+      [optId]: !ocrOptions[optId],
+    })
+  }
 
   return (
     <div className="cursor-default self-end p-4 z-50 flex flex-col items-end gap-2">
@@ -41,16 +59,12 @@ export default function Toolbar() {
 
           <div className="flex flex-col gap-2">
             <span className="text-neutral-400 text-xs uppercase tracking-wide">Output</span>
-            {[
-              { id: 'preserveLineBreaks', label: 'Preserve line breaks' },
-              { id: 'trimWhitespace', label: 'Trim whitespace' },
-              { id: 'removeExtraSpaces', label: 'Remove extra spaces' }
-            ].map(opt => (
+            {OUTPUT_OPTIONS.map(opt => (
               <label key={opt.id} className="flex items-center gap-2 cursor-pointer hover:text-white transition">
                 <input
                   type="checkbox"
-                  checked={(ocrOptions as any)[opt.id]}
-                  onChange={() => setOcrOptions({ ...ocrOptions, [opt.id]: !(ocrOptions as any)[opt.id] })}
+                  checked={ocrOptions[opt.id]}
+                  onChange={() => handleOutputChange(opt.id)}
                   className="accent-orange-500 cursor-pointer"
                 />
                 {opt.label}
@@ -70,6 +84,7 @@ export default function Toolbar() {
               Copy to clipboard
             </label>
           </div>
+
         </div>
       )}
     </div>

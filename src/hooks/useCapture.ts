@@ -3,6 +3,8 @@ import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
 import { useAppStore } from '@/store/useAppStore'
 import { ocrService } from '@/core/ocrService'
 import { showToast } from '@/core/toastEvents'
+import type { MouseEvent as ReactMouseEvent } from 'react'
+import { SelectionRect } from '@/types'
 
 export async function handleOnKeyDown(e: KeyboardEvent) {
   if (e.code === 'Tab') {
@@ -15,9 +17,10 @@ export async function handleOnKeyDown(e: KeyboardEvent) {
   }
 }
 
-export function handleOnMouseDown(e: any) {
+export function handleOnMouseDown(e: ReactMouseEvent) {
   const { setIsCapture, setClickStart, setClickEnd } = useAppStore.getState()
-  const isOverlayClick = (e.target as HTMLElement).className?.includes('overlay') ?? false
+  const target = e.target as HTMLElement | null
+  const isOverlayClick = target?.className?.includes('overlay') ?? false
 
   if (!isOverlayClick) return
 
@@ -26,7 +29,7 @@ export function handleOnMouseDown(e: any) {
   setIsCapture(true)
 }
 
-export function handleOnMouseMove(e: any) {
+export function handleOnMouseMove(e: ReactMouseEvent) {
   const { isCapture, setClickEnd } = useAppStore.getState()
 
   if (isCapture) {
@@ -34,7 +37,7 @@ export function handleOnMouseMove(e: any) {
   }
 }
 
-export async function handleOnMouseUp(e: any, rect: { left: number; top: number; width: number; height: number }) {
+export async function handleOnMouseUp(e: ReactMouseEvent, rect: SelectionRect) {
   const { isCapture, setIsCapture, setClickEnd, ocrOptions, setOcrHistory, ocrHistory } = useAppStore.getState()
 
   if (!isCapture) return
