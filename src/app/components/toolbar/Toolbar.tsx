@@ -1,6 +1,6 @@
 'use client'
 
-import { useAppStore } from "@/shared/store/useAppStore"
+import { useAppStore } from "@/store/useAppStore"
 
 interface LanguageOption {
   value: string

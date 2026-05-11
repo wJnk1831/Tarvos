@@ -1,4 +1,4 @@
-import { OcrConfig, OcrOptions, SelectionRect } from "@/types/OcrTypes"
+import { OcrConfig, OcrOptions, SelectionRect } from "@/types"
 import { invoke } from "@tauri-apps/api/core"
 import { writeText } from '@tauri-apps/plugin-clipboard-manager'
 

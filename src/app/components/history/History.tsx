@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from "react"
-import { useAppStore } from "@/shared/store/useAppStore"
+import { useAppStore } from "@/store/useAppStore"
 
 export default function History() {
   const { toggleHistoryModal, setToggleHistoryModal, ocrHistory } = useAppStore()

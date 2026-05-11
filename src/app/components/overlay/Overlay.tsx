@@ -1,6 +1,6 @@
 'use client'
-import { handleOnMouseDown, handleOnMouseMove, handleOnMouseUp } from "@/app/event-handler/GlobalEvents"
-import { useAppStore } from "@/shared/store/useAppStore"
+import { handleOnMouseDown, handleOnMouseMove, handleOnMouseUp } from "@/hooks/useCapture"
+import { useAppStore } from "@/store/useAppStore"
 import History from "@/app/components/history/History"
 import Toolbar from "@/app/components/toolbar/Toolbar"
 

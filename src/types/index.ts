@@ -30,3 +30,16 @@ export interface HistoryItem {
   text: string
   timestamp?: number
 }
+
+export interface ToastMessage {
+  id: number
+  text: string
+  type: ToastType
+}
+
+export type ToastType = 'main' | 'success' | 'error' | 'info'
+
+export interface ToastOptions {
+  message?: string
+  type?: ToastType
+}

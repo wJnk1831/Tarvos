@@ -82,15 +82,43 @@ npx tauri build
 
 ```
 tarvos/
-├── src/                    # Frontend Next.js
-│   ├── app/               # Páginas e componentes React
-│   └── types/             # Definições TypeScript
-├── src-tauri/             # Backend Rust
-│   ├── src/
-│   │   ├── commands.rs   # Comandos Tauri (OCR, captura de tela)
-│   │   ├── lib.rs        # Entrada principal do app
-│   │   └── main.rs       # Ponto de execução
-│   └── tauri.conf.json   # Configuração Tauri
-├── public/                # Assets estáticos
-└── package.json           # Dependências Node
+├── src/
+│   ├── app/                      # Frontend Next.js (App Router)
+│   │   ├── layout.tsx           # Layout raiz
+│   │   ├── page.tsx             # Página principal (Overlay)
+│   │   ├── toast/
+│   │   │   └── page.tsx         # Página da toast window
+│   │   └── components/          # Componentes de interface
+│   │       ├── overlay/
+│   │       │   └── Overlay.tsx
+│   │       ├── toolbar/
+│   │       │   └── Toolbar.tsx
+│   │       └── history/
+│   │           └── History.tsx
+│   │
+│   ├── core/                    # Lógica de backend/desktop (Tauri)
+│   │   ├── ocrService.ts        # Comunicação com OCR Rust
+│   │   ├── hotkeys.ts           # Atalhos globais do sistema
+│   │   ├── toastEvents.ts       # Sistema de notificações
+│   │   └── tray.ts              # Ícone na bandeja do sistema
+│   │
+│   ├── store/
+│   │   └── useAppStore.ts       # Estado global (Zustand)
+│   │
+│   ├── hooks/
+│   │   ├── useAppInit.ts        # Inicialização da aplicação
+│   │   └── useCapture.ts        # Eventos de mouse/teclado
+│   │
+│   └── types/
+│       └── index.ts             # Definições TypeScript
+│
+├── src-tauri/                   # Backend Rust
+│   └── src/
+│       ├── commands.rs          # Comandos Tauri (OCR, captura)
+│       ├── lib.rs
+│       └── main.rs
+│
+├── public/                      # Assets estáticos
+├── package.json                 # Dependências Node
+└── ... (demais arquivos de config)
 ```

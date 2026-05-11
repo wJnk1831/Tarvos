@@ -1,6 +1,6 @@
 'use client'
 
-import { useAppInit } from "@/shared/hooks/useAppInit"
+import { useAppInit } from "@/hooks/useAppInit"
 import Overlay from "./components/overlay/Overlay"
 
 export default function Home() {

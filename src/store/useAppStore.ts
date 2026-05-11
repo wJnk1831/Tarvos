@@ -1,4 +1,4 @@
-import { HistoryItem, OcrOptions } from "@/types/OcrTypes"
+import { HistoryItem, OcrOptions } from "@/types"
 import { create } from "zustand"
 
 interface Point {

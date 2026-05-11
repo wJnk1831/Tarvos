@@ -1,11 +1,10 @@
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { useAppStore } from "../../shared/store/useAppStore";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { ocrService } from "@/core/ocr/ocrService";
-import { showToast } from "@/shared/hooks/showToast";
+import { getCurrentWindow } from '@tauri-apps/api/window'
+import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow'
+import { useAppStore } from '@/store/useAppStore'
+import { ocrService } from '@/core/ocrService'
+import { showToast } from '@/core/toastEvents'
 
-export async function handleOnKeyDown(e) {
-
+export async function handleOnKeyDown(e: KeyboardEvent) {
   if (e.code === 'Tab') {
     e.preventDefault()
   }
@@ -16,20 +15,18 @@ export async function handleOnKeyDown(e) {
   }
 }
 
-
-export function handleOnMouseDown(e) {
+export function handleOnMouseDown(e: any) {
   const { setIsCapture, setClickStart, setClickEnd } = useAppStore.getState()
-  const isOverlayClick = e.target.className.includes('overlay')
+  const isOverlayClick = (e.target as HTMLElement).className?.includes('overlay') ?? false
 
   if (!isOverlayClick) return
 
   setClickStart({ x: e.clientX, y: e.clientY })
   setClickEnd({ x: e.clientX, y: e.clientY })
-
   setIsCapture(true)
 }
 
-export function handleOnMouseMove(e) {
+export function handleOnMouseMove(e: any) {
   const { isCapture, setClickEnd } = useAppStore.getState()
 
   if (isCapture) {
@@ -37,7 +34,7 @@ export function handleOnMouseMove(e) {
   }
 }
 
-export async function handleOnMouseUp(e, rect) {
+export async function handleOnMouseUp(e: any, rect: { left: number; top: number; width: number; height: number }) {
   const { isCapture, setIsCapture, setClickEnd, ocrOptions, setOcrHistory, ocrHistory } = useAppStore.getState()
 
   if (!isCapture) return
@@ -64,15 +61,14 @@ export async function handleOnMouseUp(e, rect) {
     setOcrHistory([{ id: Date.now(), text }, ...ocrHistory])
 
   } catch (err) {
-    console.error("OCR failed:", err)
-    const errorMessage = err.message === "EMPTY_OCR_RESULT" ? 'No text found in area' : 'OCR failed';
+    console.error('OCR failed:', err)
+    const errorMessage = err instanceof Error && err.message === 'EMPTY_OCR_RESULT' ? 'No text found in area' : 'OCR failed'
     showToast({ message: errorMessage, type: 'error' })
   }
 }
 
-export async function handleWindowBlur(focused) {
+export async function handleWindowBlur(focused: boolean) {
   const { setToggleHistoryModal } = useAppStore.getState()
-
   const window = getCurrentWebviewWindow()
 
   if (!focused) {
