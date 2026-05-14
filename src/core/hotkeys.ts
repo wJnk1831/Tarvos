@@ -1,15 +1,24 @@
 import { getCurrentWindow } from "@tauri-apps/api/window"
-import { register } from "@tauri-apps/plugin-global-shortcut"
+import { isRegistered, register, unregister } from "@tauri-apps/plugin-global-shortcut"
 import { useAppStore } from "@/store/useAppStore"
 
 const registeredShortcuts: string[] = []
 
 export async function registerCaptureHotkey(shortcut: string = 'Alt+Shift+S'): Promise<void> {
   try {
+    try { await unregister(shortcut) } catch { }
+
     await register(shortcut, handleOpenApp)
-    registeredShortcuts.push(shortcut)
   } catch (error) {
     console.error('Failed to register hotkey:', error)
+  }
+}
+
+export async function unregisterCaptureHotkey(hotkey: string) {
+  const exists = await isRegistered(hotkey)
+
+  if (exists) {
+    await unregister(hotkey)
   }
 }
 
@@ -33,6 +42,13 @@ async function handleOpenApp(): Promise<void> {
 }
 
 async function handleCloseApp(): Promise<void> {
+  const { isChangeHotKeyModalOpen, setIsChangeHotKeyModalOpen } = useAppStore.getState()
+
+  if (isChangeHotKeyModalOpen) {
+    setIsChangeHotKeyModalOpen(false)
+    return
+  }
+
   const window = getCurrentWindow()
   await window.hide()
 }

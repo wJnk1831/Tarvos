@@ -3,9 +3,10 @@ import { handleOnMouseDown, handleOnMouseMove, handleOnMouseUp } from "@/hooks/u
 import { useAppStore } from "@/store/useAppStore"
 import History from "@/app/components/history/History"
 import Toolbar from "@/app/components/toolbar/Toolbar"
+import ChangeKeysModal from "../changeKeysModal/ChangeKeyModal"
 
 export default function Overlay() {
-  const { isCapture, clickStart, clickEnd, ocrHistory } = useAppStore()
+  const { isCapture, clickStart, clickEnd, ocrHistory, isChangeHotKeyModalOpen } = useAppStore()
 
   const rect = {
     left: Math.min(clickStart.x, clickEnd.x),
@@ -27,7 +28,7 @@ export default function Overlay() {
           style={{
             left: rect.left,
             top: rect.top,
-            width: rect.width,  
+            width: rect.width,
             height: rect.height,
             boxShadow: '0 0 0 9999px rgba(0,0,0,0.30)',
           }}
@@ -35,6 +36,8 @@ export default function Overlay() {
       )}
 
       {!isCapture && ocrHistory.length > 0 && <History />}
+
+      {isChangeHotKeyModalOpen && <ChangeKeysModal />}
 
     </div>
   )

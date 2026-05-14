@@ -1,26 +1,39 @@
-﻿import { useEffect } from "react";
-import { getCurrentWindow } from "@tauri-apps/api/window";
-import { registerCaptureHotkey, registerHideHotkey } from "@/core/hotkeys";
-import { createTray } from "@/core/tray";
-import { handleOnKeyDown, handleWindowBlur } from "@/hooks/useCapture";
-import { CreateToastWindow, showToast } from "@/core/toastEvents";
-import { invoke } from "@tauri-apps/api/core";
-import { useAppStore } from "@/store/useAppStore";
+﻿import { useEffect } from "react"
+import { getCurrentWindow } from "@tauri-apps/api/window"
+import { registerCaptureHotkey, registerHideHotkey } from "@/core/hotkeys"
+import { createTray } from "@/core/tray"
+import { handleOnKeyDown, handleWindowBlur } from "@/hooks/useCapture"
+import { CreateToastWindow, showToast } from "@/core/toastEvents"
+import { invoke } from "@tauri-apps/api/core"
+import { useAppStore } from "@/store/useAppStore"
+import { LazyStore } from "@tauri-apps/plugin-store"
+
+const store = new LazyStore("settings.json")
 
 export function useAppInit() {
+  const { setCaptureHotkey } = useAppStore.getState()
+
   useEffect(() => {
     let focusUnlistenPromise: Promise<() => void> | undefined
 
     const init = async () => {
+      let savedHotkey = await store.get<string>("capture_hotkey")
+
+      if (!savedHotkey) {
+        savedHotkey = 'Alt+Shift+S'
+        await store.set("capture_hotkey", savedHotkey)
+        await store.save()
+      }
+
+      setCaptureHotkey(savedHotkey)
+
       CreateToastWindow()
       createTray()
-      registerCaptureHotkey()
+      await registerCaptureHotkey(savedHotkey)
       registerHideHotkey()
 
-      // Global keyboard listener
       document.addEventListener('keydown', handleOnKeyDown)
 
-      // Window focus listener
       focusUnlistenPromise = getCurrentWindow().onFocusChanged(({ payload: focused }) => {
         handleWindowBlur(focused)
       })
@@ -43,5 +56,5 @@ export function useAppInit() {
         focusUnlistenPromise.then(unlisten => unlisten())
       }
     }
-  }, [])
+  }, [setCaptureHotkey])
 }

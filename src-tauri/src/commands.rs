@@ -80,7 +80,7 @@ pub fn get_system_language_cmd() -> String {
 
 #[command]
 pub fn capture_and_ocr(
-    app: tauri::AppHandle,
+    _app: tauri::AppHandle,
     x: u32,
     y: u32,
     width: u32,

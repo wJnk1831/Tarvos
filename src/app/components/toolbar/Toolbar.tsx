@@ -24,7 +24,7 @@ const OUTPUT_OPTIONS: OutputOption[] = [
 ]
 
 export default function Toolbar() {
-  const { toolbarMenuOpen, setToolbarMenuOpen, selectedLanguage, setSelectedLanguage, ocrOptions, setOcrOptions } = useAppStore()
+  const { toolbarMenuOpen, setToolbarMenuOpen, selectedLanguage, setSelectedLanguage, ocrOptions, setOcrOptions, isChangeHotKeyModalOpen, setIsChangeHotKeyModalOpen } = useAppStore()
 
   const handleOutputChange = (optId: OutputOption['id']) => {
     setOcrOptions({
@@ -35,7 +35,7 @@ export default function Toolbar() {
 
   return (
     <div className="cursor-default self-end p-4 z-50 flex flex-col items-end gap-2">
-      <button onClick={() => setToolbarMenuOpen(!toolbarMenuOpen)} className="btn-glass-secondary">Config</button>
+      <button onClick={() => setToolbarMenuOpen(!toolbarMenuOpen)} className="btn-glass-secondary outline-0">Config</button>
 
       {toolbarMenuOpen && (
         <div className="mt-2 rounded-xl bg-neutral-900/80 backdrop-blur border border-neutral-700/60 p-4 flex flex-col gap-6 text-sm text-neutral-200 shadow-2xl">
@@ -85,6 +85,7 @@ export default function Toolbar() {
             </label>
           </div>
 
+          <button onClick={() => setIsChangeHotKeyModalOpen(!isChangeHotKeyModalOpen)} className="btn-glass-ghost">Change hot Key</button>
         </div>
       )}
     </div>

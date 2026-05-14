@@ -19,7 +19,7 @@ export default function History() {
   }
 
   return (
-    <div className="mr-4 mb-3 self-end z-50 flex flex-col items-end cursor-default">
+    <div className="mr-4 mb-3 self-end z-50 flex flex-col items-end cursor-default outline-0">
       <div className="w-70 flex flex-col items-stretch">
         <button onClick={() => setToggleHistoryModal(!toggleHistoryModal)} className="w-full cursor-pointer px-4 py-2 rounded-lg bg-neutral-900/80 backdrop-blur border text-center border-neutral-700/60 text-neutral-200 hover:text-white hover:opacity-80 transition">
           History
