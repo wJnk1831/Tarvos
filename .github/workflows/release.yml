@@ -37,4 +37,3 @@ jobs:
           releaseBody: 'Automatic Release'
           releaseDraft: false
           prerelease: false
-          runner: npx tauri
