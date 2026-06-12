@@ -1,5 +1,6 @@
 'use client'
 
+import { SUPPORTED_LANGUAGES } from "@/core/languages"
 import { useAppStore } from "@/store/useAppStore"
 
 interface LanguageOption {
@@ -12,10 +13,7 @@ interface OutputOption {
   label: string
 }
 
-const LANGUAGES: LanguageOption[] = [
-  { value: 'eng', label: 'English' },
-  { value: 'por', label: 'Português' },
-]
+const LANGUAGES: LanguageOption[] = [...SUPPORTED_LANGUAGES]
 
 const OUTPUT_OPTIONS: OutputOption[] = [
   { id: 'preserveLineBreaks', label: 'Preserve line breaks' },

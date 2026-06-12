@@ -44,7 +44,7 @@ Tarvos é um aplicativo desktop que permite selecionar qualquer região da tela 
 
 - **Captura de tela** - Seleção visual de qualquer região da tela
 - **Extração OCR** - Converte imagem em texto editável
-- **Atalhos Customizaveis** - Altere os atalhos para iniciar a captura de forma simples (CTRL + SHIFT + X por padrão)
+- **Atalhos Customizaveis** - Altere os atalhos para iniciar a captura de forma simples (Alt + Shift + S por padrão)
 - **Histórico** - Salva capturas anteriores para referência
 - **Integração com área de transferência** - Copia texto automaticamente
 

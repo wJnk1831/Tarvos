@@ -1,3 +1,4 @@
+import { isValidLanguage } from "@/core/languages"
 import { HistoryItem, OcrOptions } from "@/types"
 import { create } from "zustand"
 
@@ -58,14 +59,17 @@ export const useAppStore = create<AppState>((set, get) => ({
   setIsCapture: (value) => set({ isCapture: value }),
   setClickStart: (value) => set({ clickStart: value }),
   setClickEnd: (value) => set({ clickEnd: value }),
-  setSystemLanguage: (value) => set({
-    systemLanguage: value,
-    selectedLanguage: get().selectedLanguage === 'eng' ? value : get().selectedLanguage,
-    ocrOptions: {
-      ...get().ocrOptions,
-      languages: [value]
-    }
-  }),
+  setSystemLanguage: (value) => {
+    const validLanguage = isValidLanguage(value) ? value : 'eng'
+    set({
+      systemLanguage: value,
+      selectedLanguage: get().selectedLanguage === 'eng' ? validLanguage : get().selectedLanguage,
+      ocrOptions: {
+        ...get().ocrOptions,
+        languages: [validLanguage]
+      }
+    })
+  },
   setSelectedLanguage: (value) => set({
     selectedLanguage: value,
     ocrOptions: {
