@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/wJnk1831/Tarvos/compare/v1.1.2...v1.2.0) (2026-06-12)
+
+
+### Features
+
+* more languages supported ([1d3c762](https://github.com/wJnk1831/Tarvos/commit/1d3c7627eac49a8bd1ba70abd5a0875bbf07be64))
+* new language selection system ([32acab0](https://github.com/wJnk1831/Tarvos/commit/32acab0b27d75c636b6becca7bdbb8068b20ca40))
+
 ### [1.1.2](https://github.com/wJnk1831/Tarvos/compare/v1.1.1...v1.1.2) (2026-06-11)
 
 
