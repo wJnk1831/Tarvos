@@ -6,11 +6,17 @@ export interface LanguageOption {
 export const SUPPORTED_LANGUAGES: LanguageOption[] = [
   { value: 'eng', label: 'English' },
   { value: 'por', label: 'Português' },
+  { value: 'fra', label: 'Français' },
+  { value: 'spa', label: 'Español' },
+  { value: 'ukr', label: 'Українська' },
 ]
 
 export const localeToTesseractMap: Record<string, string> = {
-  'pt': 'por',
-  'en': 'eng',
+  'pt': 'por', 'pt-BR': 'por', 'pt-PT': 'por',
+  'en': 'eng', 'en-US': 'eng', 'en-GB': 'eng',
+  'fr': 'fra', 'fr-FR': 'fra', 'fr-CA': 'fra',
+  'es': 'spa', 'es-ES': 'spa', 'es-MX': 'spa',
+  'uk': 'ukr', 'uk-UA': 'ukr',
 }
 
 export function detectSystemLanguage(): string {

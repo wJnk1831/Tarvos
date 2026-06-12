@@ -3,17 +3,10 @@
 import { SUPPORTED_LANGUAGES } from "@/core/languages"
 import { useAppStore } from "@/store/useAppStore"
 
-interface LanguageOption {
-  value: string
-  label: string
-}
-
 interface OutputOption {
   id: keyof Pick<import('@/types').OcrOptions, 'preserveLineBreaks' | 'trimWhitespace' | 'removeExtraSpaces'>
   label: string
 }
-
-const LANGUAGES: LanguageOption[] = [...SUPPORTED_LANGUAGES]
 
 const OUTPUT_OPTIONS: OutputOption[] = [
   { id: 'preserveLineBreaks', label: 'Preserve line breaks' },
@@ -40,7 +33,7 @@ export default function Toolbar() {
 
           <div className="flex flex-col gap-2">
             <span className="text-neutral-400 text-xs uppercase tracking-wide">Language</span>
-            {LANGUAGES.map(lang => (
+            {SUPPORTED_LANGUAGES.map(lang => (
               <label key={lang.value} className="flex items-center gap-2 cursor-pointer hover:text-white transition">
                 <input
                   type="radio"

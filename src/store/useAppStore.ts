@@ -70,13 +70,16 @@ export const useAppStore = create<AppState>((set, get) => ({
       }
     })
   },
-  setSelectedLanguage: (value) => set({
-    selectedLanguage: value,
-    ocrOptions: {
-      ...get().ocrOptions,
-      languages: [value]
-    }
-  }),
+  setSelectedLanguage: (value) => {
+    const validLanguage = isValidLanguage(value) ? value : 'eng'
+    set({
+      selectedLanguage: validLanguage,
+      ocrOptions: {
+        ...get().ocrOptions,
+        languages: [validLanguage]
+      }
+    })
+  },
   setOcrOptions: (value) => set({ ocrOptions: value }),
   setOcrHistory: (value) => set({ ocrHistory: value }),
   setToggleHistoryModal: (value) => set({ toggleHistoryModal: value }),

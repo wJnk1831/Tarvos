@@ -64,10 +64,16 @@ fn get_system_language() -> String {
 
 fn map_locale_to_tesseract(locale: &str) -> String {
     match locale {
-        // Português (inclui pt_BR, pt_PT, etc)
+        // Português
         l if l.starts_with("pt") => "por".to_string(),
-        // Inglês (inclui en_US, en_GB, etc)
+        // Inglês
         l if l.starts_with("en") => "eng".to_string(),
+        // Francês
+        l if l.starts_with("fr") => "fra".to_string(),
+        // Espanhol
+        l if l.starts_with("es") => "spa".to_string(),
+        // Ucraniano
+        l if l.starts_with("uk") => "ukr".to_string(),
         // Qualquer outro idioma → inglês (fallback)
         _ => "eng".to_string(),
     }
