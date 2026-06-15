@@ -8,7 +8,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tech Stack](https://img.shields.io/badge/Tech-Rust%20%2B%20Next.js%20%2B%20Tauri-purple)](package.json)
+[![Tech Stack](https://img.shields.io/badge/Tech-Rust%20%2B%20Next.js%20%2B%20Tauri-purple)(package.json)
 
 </div>
 
@@ -44,7 +44,7 @@ Tarvos é um aplicativo desktop que permite selecionar qualquer região da tela 
 
 - **Captura de tela** - Seleção visual de qualquer região da tela
 - **Extração OCR** - Converte imagem em texto editável
-- **Atalhos Customizaveis** - Altere os atalhos para iniciar a captura de forma simples (Alt + Shift + S por padrão)
+- **Atalhos Customizaveis** - Altere os atalhos para iniciar a captura de forma simples (Ctrl + Shift + X por padrão)
 - **Histórico** - Salva capturas anteriores para referência
 - **Integração com área de transferência** - Copia texto automaticamente
 
@@ -88,35 +88,39 @@ tarvos/
 │   │   ├── page.tsx             # Página principal (Overlay)
 │   │   ├── toast/
 │   │   │   └── page.tsx         # Página da toast window
+│   │   ├── globals.css          # Estilos globais
 │   │   └── components/          # Componentes de interface
 │   │       ├── overlay/
 │   │       │   └── Overlay.tsx
 │   │       ├── toolbar/
 │   │       │   └── Toolbar.tsx
-│   │       └── history/
-│   │           └── History.tsx
-│   │
-│   ├── core/                    # Lógica de backend/desktop (Tauri)
-│   │   ├── ocrService.ts        # Comunicação com OCR Rust
-│   │   ├── hotkeys.ts           # Atalhos globais do sistema
+│   │       ├── history/
+│   │       │   └── History.tsx
+│   │       └── changeKeysModal/
+│   │           └── ChangeKeyModal.tsx
+│   ├── core/                    # Lógica de integração Tauri
+│   │   ├── ocrService.ts        # Comunicação com OCR
+│   │   ├── hotkeys.ts           # Atalhos globais
+│   │   ├── tray.ts              # Ícone na bandeja
 │   │   ├── toastEvents.ts       # Sistema de notificações
-│   │   └── tray.ts              # Ícone na bandeja do sistema
-│   │
-│   ├── store/
-│   │   └── useAppStore.ts       # Estado global (Zustand)
-│   │
+│   │   └── languages.ts         # Idiomas suportados
 │   ├── hooks/
 │   │   ├── useAppInit.ts        # Inicialização da aplicação
 │   │   └── useCapture.ts        # Eventos de mouse/teclado
-│   │
+│   ├── store/
+│   │   └── useAppStore.ts       # Estado global (Zustand)
 │   └── types/
 │       └── index.ts             # Definições TypeScript
 │
 ├── src-tauri/                   # Backend Rust
-│   └── src/
-│       ├── commands.rs          # Comandos Tauri (OCR, captura)
-│       ├── lib.rs
-│       └── main.rs
+│   ├── src/
+│   │   ├── commands.rs          # Comandos Tauri (OCR, captura)
+│   │   ├── lib.rs
+│   │   └── main.rs
+│   ├── binaries/                # Binários (Tesseract, DLLs)
+│   ├── icons/                   # Ícones da aplicação
+│   ├── Cargo.toml               # Dependências Rust
+│   └── tauri.conf.json          # Configuração Tauri
 │
 ├── public/                      # Assets estáticos
 ├── package.json                 # Dependências Node

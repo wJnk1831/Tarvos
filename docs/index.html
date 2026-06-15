@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tarvos</title>
+  <link rel="icon" type="image/x-icon" href="../.github/assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="nav container">
+      <a href="#" class="logo">
+        <img src="../.github/assets/icon.png" alt="Tarvos Logo" width="28" height="28" />
+        Tarvos
+      </a>
+      <div class="nav-links">
+        <a href="#recursos">Recursos</a>
+        <a href="#como-funciona">Como Funciona</a>
+        <a href="https://github.com/wJnk1831/Tarvos/releases/latest" class="btn-nav" target="_blank"
+          rel="noopener">Baixar Grátis</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero__inner">
+        <a href="https://github.com/wJnk1831/Tarvos" class="hero__badge" target="_blank" rel="noopener">
+          Tarvos com Tauri v2 Desktop <span class="badge-arrow">→</span>
+        </a>
+        <h1 class="hero__title">
+          Acesso simples e rapido para extrair textos
+        </h1>
+        <p class="hero__subtitle">
+          Substitua o processo de digitação manual pela solução veloz de OCR. Selecione qualquer região da sua
+          tela e extraia texto de imagens, vídeos ou PDFs instantaneamente.
+        </p>
+        <div class="hero__actions">
+          <a href="https://github.com/wJnk1831/Tarvos/releases/latest" class="btn btn--primary" target="_blank"
+            rel="noopener">
+            Baixar Tarvos Grátis
+          </a>
+          <a href="#como-funciona" class="btn btn--secondary">
+            Como Funciona
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="product-preview container">
+      <div class="preview-container">
+        <img src="../.github/assets/tarvos-demo1.gif" alt="Tarvos em Ação - Captura de Tela" class="demo-gif" />
+      </div>
+    </section>
+
+    <section class="how-it-works" id="como-funciona">
+      <div class="container">
+        <div class="section-header">
+          <h2>Como o Tarvos Funciona</h2>
+          <p>Crie uma ponte direta entre qualquer pixel da sua tela e a sua área de transferência.</p>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+                <path d="M7 7h10v10H7z" stroke-dasharray="3 3" />
+              </svg>
+            </div>
+            <h3>Mapeie o conteúdo da tela</h3>
+            <p>Uma vez iniciado o tarvos, pressione o atalho global <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd>
+              (ou abra diretamente pela gaveta de aplicativos) e selecione visualmente
+              qualquer área ou janela ativa.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path
+                  d="M4 7V4a1 1 0 0 1 1-1h3M16 3h3a1 1 0 0 1 1 1v3M4 17v3a1 1 0 0 0 1 1h3M16 21h3a1 1 0 0 0 1-1v-3" />
+                <path d="M9 15V9M15 15V9M9 12h6" />
+              </svg>
+            </div>
+            <h3>Converta os campos instantaneamente</h3>
+            <p>O motor de OCR inteligente alimentado por Tesseract processa e renderiza os caracteres em milissegundos.
+            </p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                <rect x="8" y="2" width="8" height="4" rx="1" fill="none" />
+                <path d="M9 12h6M9 16h4" />
+              </svg>
+            </div>
+            <h3>Cole o texto em qualquer lugar</h3>
+            <p>O conteúdo extraído é enviado diretamente para a área de transferência do sistema. Pronto para uso em
+              qualquer app.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="engine-showcase" id="engine">
+      <div class="container engine__inner">
+        <div class="engine__graphic">
+          <div class="engine-card-visual">
+            <span class="engine-tag">Core Engine</span>
+
+            <div class="engine-glow-pulse"></div>
+
+            <img src="../.github/assets/tesseract_icon.png" alt="Tesseract Engine" width="64" height="64"
+              class="engine-image-icon" />
+
+            <span class="engine-status-tag">Tesseract OCR Active</span>
+          </div>
+        </div>
+        <div class="engine__content">
+          <span class="section-badge">Tecnologia Inteligente</span>
+          <h2>Alimentado pelo Tesseract, mantido pelo Google</h2>
+          <p class="engine-description">
+            O Tarvos utiliza como motor principal o Tesseract OCR, uma das engines de reconhecimento óptico de
+            caracteres mais robustas e precisas do mercado mundial.
+          </p>
+          <div class="engine-benefits">
+            <div class="benefit-point">
+              <strong>Redes Neurais (LSTM)</strong>
+              <p>Reconhecimento baseado em aprendizado profundo que analisa o contexto das linhas para entregar
+                resultados altamente precisos.</p>
+            </div>
+            <div class="benefit-point">
+              <strong>Privacidade Local Absoluta</strong>
+              <p>O processamento é feito 100% no seu hardware de forma nativa. Nenhum pixel ou texto extraído é enviado
+                para servidores externos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="features" id="recursos">
+      <div class="container features__inner">
+        <div class="features__content">
+          <h2>Produtividade focada na simplicidade</h2>
+          <div class="feature-item">
+            <h4>Atalho Global Nativo</h4>
+            <p>Acesse o OCR instantaneamente de qualquer lugar sem precisar abrir janelas intermediárias.</p>
+          </div>
+          <div class="feature-item">
+            <h4>Simplicidade e rapidez</h4>
+            <p>Extraia e copie textos de imagens, videos e livros de forma precisa e sempre disponível.</p>
+          </div>
+          <div class="feature-item">
+            <h4>Compacto e funcional</h4>
+            <p>Consumo mínimo de memória RAM, processamento e armazenamento, tudo com uma interface fluida, mesmo em
+              maquinas modestas.</p>
+          </div>
+          <div class="feature-item">
+            <h4>Multilíngue </h4>
+            <p>Extraia textos em 5 idiomas (português, inglês, espanhol, francês e ucraniano).</p>
+          </div>
+        </div>
+        <div class="features__graphic">
+          <img src="../.github/assets/tarvos-demo2.gif" alt="Tarvos Histórico e Configurações" class="demo-gif" />
+        </div>
+      </div>
+    </section>
+
+    <section class="cta" id="download">
+      <div class="container">
+        <div class="cta-card">
+          <h2>Pronto para acelerar seu workflow?</h2>
+          <p>Baixe o Tarvos de forma totalmente gratuita.</p>
+          <div class="hero__actions">
+            <a href="https://github.com/wJnk1831/Tarvos/releases/latest" class="btn btn--primary" target="_blank"
+              rel="noopener">
+              Baixar para Windows
+            </a>
+          </div>
+          <span class="cta__meta">Windows 10+ x64</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer__inner">
+      <div class="footer__brand">
+        <span class="logo">
+          <img src="../.github/assets/icon.png" alt="Tarvos Logo" width="20" height="20" />
+          Tarvos
+        </span>
+        <p>© 2026 Projeto Tarvos. Desenvolvido com Tauri v2.</p>
+      </div>
+      <div class="footer__links">
+        <a href="https://github.com/wJnk1831/Tarvos" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/wJnk1831/Tarvos/releases" target="_blank" rel="noopener">Releases</a>
+      </div>
+    </div>
+  </footer>
+</body>
+
+</html>
