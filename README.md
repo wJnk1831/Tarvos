@@ -8,7 +8,7 @@
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tech Stack](https://img.shields.io/badge/Tech-Rust%20%2B%20Next.js%20%2B%20Tauri-purple)(package.json)
+![Tech Stack](https://img.shields.io/badge/Tech-Rust%20%2B%20Next.js%20%2B%20Tauri-purple)
 
 </div>
 
