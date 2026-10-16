@@ -18,7 +18,7 @@ export default function SettingsModal() {
 
   return (
     <div className="absolute right-4 top-7 cursor-default select-none">
-      <button className={`flex h-9 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm backdrop-blur-md transition border-white/10 bg-[#141416] text-zinc-300 hover:bg-[#222226] ${settingsOpen && 'bg-[#151517]'} `} type="button" onClick={() => { setSettingsOpen((open) => !open) }} >
+      <button className={`flex h-9 cursor-pointer items-center gap-2 rounded-lg border px-3 text-sm backdrop-blur-md transition border-white/10 bg-[#141416] text-zinc-300 hover:bg-[#222226] ${settingsOpen && 'bg-[#151517]'} `} onClick={() => { setSettingsOpen((open) => !open) }} >
         <Settings2 size={14} /> Settings <ChevronDown size={12} className={`transition-transform ${settingsOpen ? "rotate-180" : ""}`} />
       </button>
 
@@ -57,31 +57,33 @@ export default function SettingsModal() {
         </div>
       )}
 
+
       {hotkeyModalOpen && (
         <div className="fixed inset-0 z-130 grid place-items-center bg-black/65 p-4 backdrop-blur-sm" >
           <div className="w-full max-w-90 rounded-2xl border border-white/10 bg-[#151517] p-5 shadow-2xl shadow-black/60">
             <div className="mb-5 flex items-start justify-between">
               <div>
-                <h2 className="text-sm font-semibold text-zinc-100">Atalho de captura</h2>
-                <p className="mt-1 text-[12px] text-zinc-500">Defina a combinação para abrir o overlay.</p>
+                <h2 className="text-sm font-semibold text-zinc-100">Capture Shortcut</h2>
+                <p className="mt-1 text-[12px] text-zinc-500">Set the key combination to open the overlay.</p>
               </div>
             </div>
             <button
               type="button"
               onClick={() => { setRecording(true); setRecordedHotkey("") }}
-              className={`cursor-pointer flex min-h-19 w-full flex-col items-center justify-center gap-2 rounded-xl border border-dashed transition ${recording ? "border-[#ff7a4a]/40 bg-[#ff7a4a]/[0.07]" : "border-white/12 bg-black/20 hover:bg-white/2.5"}`}
+              className={`cursor-pointer flex min-h-19 w-full flex-col items-center justify-center gap-1 rounded-xl border border-dashed transition ${recording ? "border-[#ff7a4a]/40 bg-[#ff7a4a]/[0.07]" : "border-white/12 bg-black/20 hover:bg-white/2.5"}`}
             >
               <Keyboard size={18} className={recording ? "text-[#ff9668]" : "text-zinc-500"} />
-              <span className="text-sm text-zinc-200">{recording ? "Pressione as teclas…" : recordedHotkey || hotkey}</span>
-              <span className="text-[12px] text-zinc-600">{recording ? "Use ao menos um modificador e uma tecla" : "Clique para registrar outra combinação"}</span>
+              <span className="text-sm text-zinc-200">{recording ? "Press the keys…" : recordedHotkey || hotkey}</span>
+              <span className="text-[12px] text-zinc-600">{recording ? "Use at least one modifier and one key" : "Click to record a different combination"}</span>
             </button>
             <div className="mt-5 text-sm flex justify-end gap-2">
-              <button onClick={() => { setHotkeyModalOpen(false); setRecording(false) }} className="cursor-pointer rounded-lg border border-white/8 px-3 py-2 text-zinc-400 hover:bg-white/4">Cancelar</button>
-              <button disabled={!recording} className={`cursor-pointer ${!recording && 'opacity-70'} rounded-lg bg-[#f5602a] px-4 py-2  font-semibold text-white transition hover:bg-[#ff7a4a]`}>Salvar atalho</button>
+              <button onClick={() => { setHotkeyModalOpen(false); setRecording(false) }} className="cursor-pointer rounded-lg border border-white/8 px-3 py-2 text-zinc-400 hover:bg-white/4">Cancel</button>
+              <button disabled={!recording} className={`cursor-pointer ${!recording && 'opacity-70'} rounded-lg bg-[#f5602a] px-4 py-2 font-semibold text-white transition hover:bg-[#ff7a4a]`}>Save Shortcut</button>
             </div>
           </div>
         </div>
       )}
+
 
     </div>
   )
