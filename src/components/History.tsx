@@ -22,9 +22,9 @@ export default function History() {
   }
 
   return (
-    <div className="absolute bottom-10 right-4 z-40 w-65 cursor-default">
+    <div className="absolute bottom-5 right-4 z-40 w-65 cursor-default">
       <div className="flex flex-col items-stretch gap-2">
-        <button type="button" onClick={() => setHistoryOpen((open) => !open)} className="flex h-10 w-full cursor-pointer items-center justify-between gap-2 rounded-t-lg border border-white/10 bg-[#141416]/90 px-3 text-zinc-300 shadow-lg backdrop-blur-xl transition hover:bg-[#222226]">
+        <button type="button" onClick={() => setHistoryOpen((open) => !open)} className="flex h-10 w-full cursor-pointer items-center justify-between gap-2 rounded-t-lg border border-white/10 bg-[#141416] px-3 text-zinc-300 shadow-lg backdrop-blur-xl transition hover:bg-[#222226]">
           <div className="flex items-center gap-2">
             <HistoryIcon size={14} />
             <span className="text-[10px] font-medium">History</span>

@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export default function SettingsModal() {
   const [settingsOpen, setSettingsOpen] = useState(false)
-  const [hotkeyModalOpen, setHotkeyModalOpen] = useState(true)
+  const [hotkeyModalOpen, setHotkeyModalOpen] = useState(false)
 
   const [hotkey, setHotkey] = useState('Ctrl + Shift + X')
   const [recording, setRecording] = useState(false)
