@@ -32,6 +32,13 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
+    "externalBin": [
+      "binaries/tesseract"
+    ],
+    "resources": {
+      "resources/tesseract-libs/*": "resources/tesseract-libs/",
+      "resources/tessdata/*": "resources/tessdata/"
+    },
     "android": {
       "debugApplicationIdSuffix": ".debug"
     }

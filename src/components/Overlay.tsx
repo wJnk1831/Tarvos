@@ -2,12 +2,29 @@
 import { useState } from "react"
 import History from "./History"
 import SettingsModal from "./SettingsModal"
+import { recognizeRegion } from "../lib/ocr"
+import { writeText } from "@tauri-apps/plugin-clipboard-manager"
+
+const MIN_WIDTH = 30
+const MIN_HEIGHT = 10
+const PAINT_SETTLE_MS = 60
+
+const nextFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
+const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
+
+async function waitForPaint() {
+  await nextFrame()
+  await nextFrame()
+  await sleep(PAINT_SETTLE_MS)
+}
 
 export default function Overlay() {
-  const [capture, setCapture] = useState(false)
-  const [processing, setProcessing] = useState(false)
+  const [isCapture, setIsCapture] = useState(false)
   const [selection, setSelection] = useState({ startX: 0, startY: 0, endX: 0, endY: 0 })
   const [mouseDown, setMouseDown] = useState(false)
+  const [capturing, setCapturing] = useState(false)
+  const [text, setText] = useState('')
+  const [error, setError] = useState('')
 
   const rect = {
     left: Math.min(selection.startX, selection.endX),
@@ -17,7 +34,10 @@ export default function Overlay() {
   }
 
   function onMouseDown(e: React.MouseEvent<HTMLDivElement>) {
+    if (capturing) return
+    setIsCapture(true)
     setMouseDown(true)
+    setError('')
     setSelection({ startX: e.clientX, startY: e.clientY, endX: e.clientX, endY: e.clientY })
   }
 
@@ -26,15 +46,45 @@ export default function Overlay() {
     setSelection(prev => ({ ...prev, endX: e.clientX, endY: e.clientY }))
   }
 
-  function onMouseUp() {
-    setMouseDown(false)
+  async function onMouseUp() {
     if (!mouseDown) return
-    console.log(selection)
+
+    const region = { ...rect }
+
+    setMouseDown(false)
+
+    if (region.width < MIN_WIDTH || region.height < MIN_HEIGHT) {
+      setIsCapture(false)
+      return
+    }
+
+    setCapturing(true)
+
+    try {
+      await waitForPaint()
+
+      const result = await recognizeRegion(region)
+
+      await writeText(result)
+      setText(result)
+
+    } catch (err) {
+      console.error("Fail:", err)
+      setError(String(err))
+    } finally {
+      setCapturing(false)
+      setIsCapture(false)
+    }
   }
 
   return (
     <div className="absolute inset-0 z-10 select-none overflow-hidden">
-      <div className="overlay absolute inset-0 cursor-crosshair" onMouseDown={onMouseDown} onMouseMove={onMouseMove} onMouseUp={onMouseUp}>
+      <div
+        className={`overlay absolute inset-0 ${capturing ? 'pointer-events-none' : 'cursor-crosshair'}`}
+        onMouseDown={onMouseDown}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
+      >
         {mouseDown ? (
           <>
             <div className="pointer-events-none fixed inset-x-0 top-0 bg-black/30" style={{ height: rect.top }} />
@@ -51,11 +101,14 @@ export default function Overlay() {
             )}
           </>
         ) : (
-          <div className="absolute inset-0 bg-black/30" />
+          <div className={`absolute inset-0 ${capturing ? '' : 'bg-black/30'}`} />
         )}
       </div>
-      <SettingsModal />
-      <History />
+
+      {!isCapture && <SettingsModal />}
+      {!isCapture && <History />}
+      {!capturing && text && <span className="max-w-30 text-white">{text}</span>}
+      {!capturing && error && <span className="max-w-30 text-red-400">{error}</span>}
     </div>
   )
 }

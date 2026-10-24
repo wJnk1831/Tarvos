@@ -11,7 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
-/src/ux.tsx
+# /src/ux.tsx
 
 # Editor directories and files
 .vscode/*
