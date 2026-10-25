@@ -1,13 +1,16 @@
 'use client'
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import History from "./History"
 import SettingsModal from "./SettingsModal"
-import { recognizeRegion } from "../lib/ocr"
+import { DEFAULT_OCR_OPTIONS, detectSystemLanguage, recognizeRegion } from "../lib/ocr"
+import { DEFAULT_HOTKEY, loadHotkey, saveHotkey } from "../lib/hotkey"
 import { writeText } from "@tauri-apps/plugin-clipboard-manager"
+import type { HistoryItem, OcrOptions } from "../types"
 
 const MIN_WIDTH = 30
 const MIN_HEIGHT = 10
 const PAINT_SETTLE_MS = 60
+const MAX_HISTORY = 50
 
 const nextFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
 const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
@@ -23,8 +26,22 @@ export default function Overlay() {
   const [selection, setSelection] = useState({ startX: 0, startY: 0, endX: 0, endY: 0 })
   const [mouseDown, setMouseDown] = useState(false)
   const [capturing, setCapturing] = useState(false)
-  const [text, setText] = useState('')
-  const [error, setError] = useState('')
+
+  const [ocrOptions, setOcrOptions] = useState<OcrOptions>(DEFAULT_OCR_OPTIONS)
+  const [hotkey, setHotkey] = useState(DEFAULT_HOTKEY)
+  const [ocrHistory, setOcrHistory] = useState<HistoryItem[]>([])
+
+  const nextId = useRef(0)
+
+  useEffect(() => {
+    setOcrOptions(prev => ({ ...prev, language: detectSystemLanguage() }))
+    setHotkey(loadHotkey())
+  }, [])
+
+  function handleHotkeyChange(next: string) {
+    setHotkey(next)
+    saveHotkey(next)
+  }
 
   const rect = {
     left: Math.min(selection.startX, selection.endX),
@@ -37,7 +54,6 @@ export default function Overlay() {
     if (capturing) return
     setIsCapture(true)
     setMouseDown(true)
-    setError('')
     setSelection({ startX: e.clientX, startY: e.clientY, endX: e.clientX, endY: e.clientY })
   }
 
@@ -63,14 +79,16 @@ export default function Overlay() {
     try {
       await waitForPaint()
 
-      const result = await recognizeRegion(region)
+      const result = (await recognizeRegion(region, ocrOptions)).trim()
+      if (!result) return
 
       await writeText(result)
-      setText(result)
 
+      setOcrHistory(prev =>
+        [{ id: nextId.current++, text: result }, ...prev].slice(0, MAX_HISTORY)
+      )
     } catch (err) {
       console.error("Fail:", err)
-      setError(String(err))
     } finally {
       setCapturing(false)
       setIsCapture(false)
@@ -105,10 +123,17 @@ export default function Overlay() {
         )}
       </div>
 
-      {!isCapture && <SettingsModal />}
-      {!isCapture && <History />}
-      {!capturing && text && <span className="max-w-30 text-white">{text}</span>}
-      {!capturing && error && <span className="max-w-30 text-red-400">{error}</span>}
+      {!isCapture && (
+        <SettingsModal
+          options={ocrOptions}
+          onChange={setOcrOptions}
+          hotkey={hotkey}
+          onHotkeyChange={handleHotkeyChange}
+        />
+      )}
+      <div className={isCapture ? 'invisible' : undefined}>
+        <History items={ocrHistory} />
+      </div>
     </div>
   )
 }
