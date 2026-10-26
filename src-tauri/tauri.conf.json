@@ -15,7 +15,9 @@
         "label": "main",
         "title": "Tarvos",
         "fullscreen": true,
-        "transparent": true
+        "visible": false,
+        "transparent": true,
+        "skipTaskbar": true
       }
     ],
     "security": {

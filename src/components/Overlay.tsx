@@ -6,20 +6,16 @@ import { DEFAULT_OCR_OPTIONS, detectSystemLanguage, recognizeRegion } from "../l
 import { DEFAULT_HOTKEY, loadHotkey, saveHotkey } from "../lib/hotkey"
 import { writeText } from "@tauri-apps/plugin-clipboard-manager"
 import type { HistoryItem, OcrOptions } from "../types"
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow"
 
 const MIN_WIDTH = 30
 const MIN_HEIGHT = 10
-const PAINT_SETTLE_MS = 60
 const MAX_HISTORY = 50
+const HIDE_SETTLE_MS = 150
 
-const nextFrame = () => new Promise<void>(resolve => requestAnimationFrame(() => resolve()))
 const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 
-async function waitForPaint() {
-  await nextFrame()
-  await nextFrame()
-  await sleep(PAINT_SETTLE_MS)
-}
+
 
 export default function Overlay() {
   const [isCapture, setIsCapture] = useState(false)
@@ -77,7 +73,8 @@ export default function Overlay() {
     setCapturing(true)
 
     try {
-      await waitForPaint()
+      await getCurrentWebviewWindow().hide()
+      await sleep(HIDE_SETTLE_MS)
 
       const result = (await recognizeRegion(region, ocrOptions)).trim()
       if (!result) return

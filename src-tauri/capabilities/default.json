@@ -5,10 +5,17 @@
   "windows": [
     "main"
   ],
-  "permissions": [
+   "permissions": [
     "core:default",
-    "core:window:allow-hide",
+    "core:tray:default",
+    "core:menu:default",
+    "core:app:default",
     "core:window:allow-show",
-    "clipboard-manager:allow-write-text"
+    "core:window:allow-hide",
+    "core:window:allow-set-focus",
+    "core:window:allow-set-fullscreen",
+    "process:allow-exit",
+    "clipboard-manager:allow-write-text",
+    "core:app:allow-default-window-icon"
   ]
 }

@@ -320,6 +320,7 @@ pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_clipboard_manager::init())
+        .plugin(tauri_plugin_process::init())
         .invoke_handler(tauri::generate_handler![ocr_region])
         .run(tauri::generate_context!())
         .expect("Failed to run the Tauri application");
