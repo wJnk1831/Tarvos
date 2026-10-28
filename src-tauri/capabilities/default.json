@@ -5,7 +5,7 @@
   "windows": [
     "*"
   ],
-   "permissions": [
+  "permissions": [
     "core:default",
     "core:tray:default",
     "core:menu:default",
@@ -20,6 +20,10 @@
     "core:window:allow-set-fullscreen",
     "process:allow-exit",
     "clipboard-manager:allow-write-text",
-    "core:app:allow-default-window-icon"
+    "core:app:allow-default-window-icon",
+    "global-shortcut:allow-register",
+    "global-shortcut:allow-is-registered",
+    "global-shortcut:allow-unregister",
+    "global-shortcut:allow-unregister-all"
   ]
 }

@@ -8,6 +8,7 @@ use image::{
 use screenshots::Screen;
 use serde::Deserialize;
 use tauri::{path::BaseDirectory, AppHandle, Manager};
+use tauri_plugin_global_shortcut::{GlobalShortcutExt, ShortcutState};
 use tauri_plugin_shell::ShellExt;
 
 const MAX_SIDE: u32 = 4000;
@@ -315,13 +316,32 @@ async fn ocr_region(
     result.map(|raw| format_text(&raw, &format.unwrap_or_default()))
 }
 
+#[tauri::command]
+async fn register_global_shortcut(app: AppHandle, shortcut: String) -> Result<(), String> {
+    let gs = app.global_shortcut();
+    let _ = gs.unregister_all();
+    gs.register(shortcut.as_str())
+        .map_err(|e| format!("Failed to register shortcut: {e}"))
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_process::init())
-        .invoke_handler(tauri::generate_handler![ocr_region])
+        .plugin(tauri_plugin_global_shortcut::Builder::new()
+            .with_handler(|app, _shortcut, event| {
+                if event.state == ShortcutState::Pressed {
+                    if let Some(window) = app.get_webview_window("main") {
+                        let _ = window.show();
+                        let _ = window.set_fullscreen(true);
+                        let _ = window.set_focus();
+                    }
+                }
+            })
+            .build())
+        .invoke_handler(tauri::generate_handler![ocr_region, register_global_shortcut])
         .run(tauri::generate_context!())
         .expect("Failed to run the Tauri application");
 }

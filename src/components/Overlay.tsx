@@ -8,6 +8,7 @@ import { writeText } from "@tauri-apps/plugin-clipboard-manager"
 import type { HistoryItem, OcrOptions } from "../types"
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow"
 import { toast } from "../lib/toast"
+import { syncGlobalShortcut } from "../lib/global-shortcut"
 
 const MIN_WIDTH = 30
 const MIN_HEIGHT = 10
@@ -22,22 +23,35 @@ export default function Overlay() {
   const [mouseDown, setMouseDown] = useState(false)
   const [capturing, setCapturing] = useState(false)
 
-  const [ocrOptions, setOcrOptions] = useState<OcrOptions>({
-    ...DEFAULT_OCR_OPTIONS,
-    language: detectSystemLanguage(),
-  })
+  const [ocrOptions, setOcrOptions] = useState<OcrOptions>({ ...DEFAULT_OCR_OPTIONS, language: detectSystemLanguage()})
   const [hotkey, setHotkey] = useState<string>(loadHotkey())
   const [ocrHistory, setOcrHistory] = useState<HistoryItem[]>([])
 
   const nextId = useRef(0)
 
   useEffect(() => {
-    toast.info("Tarvos is ready")
+    let cancelled = false
+
+    async function init() {
+      const registeredHotkey = await syncGlobalShortcut()
+      if (cancelled) return
+      if (registeredHotkey !== hotkey) {
+        setHotkey(registeredHotkey)
+      }
+      toast.info(`Tarvos is ready. Press ${registeredHotkey}.`)
+    }
+
+    void init()
+
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   function handleHotkeyChange(next: string) {
     setHotkey(next)
     saveHotkey(next)
+    void syncGlobalShortcut()
   }
 
   const rect = {
