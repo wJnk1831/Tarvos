@@ -3,15 +3,19 @@
   "identifier": "default",
   "description": "enables the default permissions",
   "windows": [
-    "main"
+    "*"
   ],
    "permissions": [
     "core:default",
     "core:tray:default",
     "core:menu:default",
     "core:app:default",
+    "core:webview:allow-create-webview-window",
+    "core:webview:allow-webview-show",
     "core:window:allow-show",
     "core:window:allow-hide",
+    "core:window:allow-set-size",
+    "core:window:allow-set-position",
     "core:window:allow-set-focus",
     "core:window:allow-set-fullscreen",
     "process:allow-exit",

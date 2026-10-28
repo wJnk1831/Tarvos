@@ -3,10 +3,11 @@ import { useEffect, useRef, useState } from "react"
 import History from "./History"
 import SettingsModal from "./SettingsModal"
 import { DEFAULT_OCR_OPTIONS, detectSystemLanguage, recognizeRegion } from "../lib/ocr"
-import { DEFAULT_HOTKEY, loadHotkey, saveHotkey } from "../lib/hotkey"
+import { loadHotkey, saveHotkey } from "../lib/hotkey"
 import { writeText } from "@tauri-apps/plugin-clipboard-manager"
 import type { HistoryItem, OcrOptions } from "../types"
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow"
+import { toast } from "../lib/toast"
 
 const MIN_WIDTH = 30
 const MIN_HEIGHT = 10
@@ -15,23 +16,23 @@ const HIDE_SETTLE_MS = 150
 
 const sleep = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms))
 
-
-
 export default function Overlay() {
   const [isCapture, setIsCapture] = useState(false)
   const [selection, setSelection] = useState({ startX: 0, startY: 0, endX: 0, endY: 0 })
   const [mouseDown, setMouseDown] = useState(false)
   const [capturing, setCapturing] = useState(false)
 
-  const [ocrOptions, setOcrOptions] = useState<OcrOptions>(DEFAULT_OCR_OPTIONS)
-  const [hotkey, setHotkey] = useState(DEFAULT_HOTKEY)
+  const [ocrOptions, setOcrOptions] = useState<OcrOptions>({
+    ...DEFAULT_OCR_OPTIONS,
+    language: detectSystemLanguage(),
+  })
+  const [hotkey, setHotkey] = useState<string>(loadHotkey())
   const [ocrHistory, setOcrHistory] = useState<HistoryItem[]>([])
 
   const nextId = useRef(0)
 
   useEffect(() => {
-    setOcrOptions(prev => ({ ...prev, language: detectSystemLanguage() }))
-    setHotkey(loadHotkey())
+    toast.info("Tarvos is ready")
   }, [])
 
   function handleHotkeyChange(next: string) {
@@ -77,15 +78,21 @@ export default function Overlay() {
       await sleep(HIDE_SETTLE_MS)
 
       const result = (await recognizeRegion(region, ocrOptions)).trim()
-      if (!result) return
+      if (!result) {
+        toast.error("No text detected in the selected region")
+        return
+      }
 
       await writeText(result)
 
       setOcrHistory(prev =>
         [{ id: nextId.current++, text: result }, ...prev].slice(0, MAX_HISTORY)
       )
+
+      toast.success("Text copied to clipboard")
     } catch (err) {
       console.error("Fail:", err)
+      toast.error("OCR failed")
     } finally {
       setCapturing(false)
       setIsCapture(false)

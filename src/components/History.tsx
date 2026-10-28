@@ -4,6 +4,7 @@ import { ChevronUp, HistoryIcon, Copy } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { writeText } from "@tauri-apps/plugin-clipboard-manager"
 import type { HistoryItem } from "../types"
+import { toast } from "../lib/toast"
 
 interface Props {
   items: HistoryItem[]
@@ -31,6 +32,7 @@ export default function History({ items }: Props) {
       timerRef.current = setTimeout(() => setCopiedId(null), COPIED_FEEDBACK_MS)
     } catch (error) {
       console.error("Failed to copy text:", error)
+      toast.error("Failed to copy text")
     }
   }
 
