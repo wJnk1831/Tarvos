@@ -23,7 +23,7 @@ export default function Overlay() {
   const [mouseDown, setMouseDown] = useState(false)
   const [capturing, setCapturing] = useState(false)
 
-  const [ocrOptions, setOcrOptions] = useState<OcrOptions>({ ...DEFAULT_OCR_OPTIONS, language: detectSystemLanguage()})
+  const [ocrOptions, setOcrOptions] = useState<OcrOptions>({ ...DEFAULT_OCR_OPTIONS, language: detectSystemLanguage() })
   const [hotkey, setHotkey] = useState<string>(loadHotkey())
   const [ocrHistory, setOcrHistory] = useState<HistoryItem[]>([])
 
@@ -46,7 +46,21 @@ export default function Overlay() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [hotkey])
+
+  useEffect(() => {
+    const handleKeyDown = async (e: KeyboardEvent) => {
+      if (e.key === "Escape" && !mouseDown) {
+        await getCurrentWebviewWindow().hide()
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown)
+    }
+  }, [mouseDown])
 
   function handleHotkeyChange(next: string) {
     setHotkey(next)
