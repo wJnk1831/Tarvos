@@ -2,6 +2,8 @@
 
 <div align="center">
 
+![Tarvos](.github/assets/tarvos_banner.png)
+
 **Utilitário desktop para capturar texto da tela usando OCR**
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
@@ -11,7 +13,13 @@
 
 ## Sobre
 
+## 🏗️ Tarvos - Ferramenta Desktop para OCR
+
 Tarvos é um aplicativo desktop que permite selecionar qualquer região da tela e extrair o texto visível usando OCR (Optical Character Recognition). Ideal para copiar texto de imagens, screenshots, vídeos ou qualquer conteúdo que não permita seleção direta de texto.
+
+
+![Tarvos demo](.github/assets/tarvos-demo1.gif)
+
 
 ## Plataformas Suportadas
 

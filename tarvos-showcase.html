@@ -1,0 +1,619 @@
+<!doctype html>
+<html lang="pt-BR" class="scroll-smooth">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#09090b">
+  <meta name="description"
+    content="Tarvos — OCR instantâneo para Windows. Capture qualquer região da tela, extraia o texto e continue seu fluxo de trabalho.">
+  <title>Tarvos — Texto, direto da tela</title>
+  <link rel="icon" type="image/png" href="./assets/icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { ink: '#09090b', panel: '#101012', line: '#242427', muted: '#85858e', accent: '#ff5a24' },
+          fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['DM Mono', 'monospace'] },
+          boxShadow: { glow: '0 0 70px rgba(255,90,36,.15)' }
+        }
+      }
+    }
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #09090b;
+      color: #f4f4f5;
+      font-family: Inter, sans-serif;
+      overflow-x: hidden;
+    }
+
+    ::selection {
+      background: rgba(255, 90, 36, .35);
+      color: white;
+    }
+
+    .noise:before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: .12;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.2'/%3E%3C/svg%3E");
+    }
+
+    .grid-bg {
+      background-image: linear-gradient(rgba(255, 255, 255, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, .035) 1px, transparent 1px);
+      background-size: 56px 56px;
+      mask-image: linear-gradient(to bottom, black, transparent 90%);
+    }
+
+    .orange-text {
+      background: linear-gradient(110deg, #ff8a55, #ff5122 60%, #ffad72);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .glass {
+      background: linear-gradient(145deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .018));
+      border: 1px solid rgba(255, 255, 255, .09);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .35);
+    }
+
+    .hero-orb {
+      position: absolute;
+      width: 620px;
+      height: 620px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 91, 36, .13), rgba(255, 91, 36, .035) 38%, transparent 70%);
+      filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .float {
+      animation: float 7s ease-in-out infinite;
+    }
+
+    .float-delayed {
+      animation: float 8s ease-in-out 1.2s infinite;
+    }
+
+    @keyframes float {
+
+      0%,
+      100% {
+        transform: translateY(0)
+      }
+
+      50% {
+        transform: translateY(-13px)
+      }
+    }
+
+    .pulse-dot {
+      box-shadow: 0 0 0 0 rgba(255, 90, 36, .55);
+      animation: pulse 2.2s infinite;
+    }
+
+    @keyframes pulse {
+      70% {
+        box-shadow: 0 0 0 9px rgba(255, 90, 36, 0)
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(255, 90, 36, 0)
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .75s ease, transform .75s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .scanline {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 1px;
+      top: 0;
+      background: linear-gradient(90deg, transparent, rgba(255, 111, 65, .8), transparent);
+      box-shadow: 0 0 18px rgba(255, 90, 36, .5);
+      animation: scan 5s ease-in-out infinite;
+    }
+
+    @keyframes scan {
+
+      0%,
+      100% {
+        top: 12%;
+        opacity: 0
+      }
+
+      15%,
+      75% {
+        opacity: 1
+      }
+
+      90% {
+        top: 88%;
+        opacity: 0
+      }
+    }
+
+    .kbd {
+      border: 1px solid #39393e;
+      background: #1a1a1d;
+      border-radius: 6px;
+      padding: 4px 7px;
+      font: 11px 'DM Mono', monospace;
+      color: #d4d4d8;
+      box-shadow: 0 2px 0 #080809;
+    }
+
+    .feature-card {
+      transition: transform .3s ease, border-color .3s ease, background .3s ease;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(255, 90, 36, .35);
+      background: rgba(255, 255, 255, .045);
+    }
+
+    .btn-primary {
+      background: #ff5a24;
+      box-shadow: 0 8px 28px rgba(255, 90, 36, .18);
+      transition: all .25s ease;
+    }
+
+    .btn-primary:hover {
+      background: #ff7042;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 34px rgba(255, 90, 36, .28);
+    }
+
+    .btn-secondary {
+      transition: all .25s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: #55555b;
+      background: rgba(255, 255, 255, .06);
+    }
+
+    @media(prefers-reduced-motion:reduce) {
+
+      *,
+      *:before,
+      *:after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important
+      }
+
+      .reveal {
+        opacity: 1;
+        transform: none
+      }
+    }
+  </style>
+</head>
+
+<body class="antialiased">
+  <header class="fixed top-0 z-50 w-full border-b border-white/[.06] bg-ink/75 backdrop-blur-xl">
+    <nav class="mx-auto flex h-[76px] max-w-7xl items-center justify-between px-6 lg:px-10">
+      <a href="#" class="flex items-center gap-3" aria-label="Tarvos, início">
+        <span class="grid h-12 w-12 place-items-center rounded-xl ">
+          <img src="assets/icon.png" alt="" class="h-10 w-10 object-contain" onerror="this.style.display='none'">
+
+        </span>
+        <span class="text-[17px] font-bold tracking-tight">tarvos<span class="text-accent">.</span></span>
+      </a>
+      <div class="hidden items-center gap-9 text-[13px] font-medium text-zinc-400 md:flex">
+        <a class="transition hover:text-white" href="#recursos">Recursos</a>
+        <a class="transition hover:text-white" href="#como-funciona">Como funciona</a>
+        <a class="transition hover:text-white" href="#privacidade">Privacidade</a>
+      </div>
+      <a href="https://github.com/wJnk1831/Tarvos/releases/latest" target="_blank" rel="noopener"
+        class="btn-primary inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-[12px] font-semibold text-white">
+        Baixar grátis <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M7 17 17 7M7 7h10v10" />
+        </svg>
+      </a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="noise relative isolate overflow-hidden pb-20 pt-36 sm:pt-44 lg:pb-28 lg:pt-48">
+      <div class="grid-bg absolute inset-0 -z-20"></div>
+      <div class="hero-orb -right-52 top-0 -z-10"></div>
+      <div class="hero-orb -left-[420px] top-80 -z-10 opacity-50"></div>
+      <div class="mx-auto max-w-7xl px-6 lg:px-10">
+        <div class="mx-auto max-w-4xl text-center">
+          <a href="https://github.com/wJnk1831/Tarvos" target="_blank" rel="noopener"
+            class="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-3.5 py-2 text-[11px] font-medium text-zinc-300 transition hover:border-orange-400/40 hover:text-white">
+            <span class="pulse-dot h-1.5 w-1.5 rounded-full bg-accent"></span>
+            OCR nativo para Windows <span class="text-zinc-600">/</span> Open source <span
+              class="ml-1 text-accent">↗</span>
+          </a>
+          <h1 class="text-[clamp(2.8rem,7vw,5.7rem)] font-semibold leading-[1.04] tracking-[-.065em]">
+            O texto está na tela.<br><span class="orange-text">Agora também está com você.</span>
+          </h1>
+          <p class="mx-auto mt-7 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg sm:leading-8">
+            Capture qualquer região do seu monitor e transforme pixels em texto copiável. Sem etapas desnecessárias, sem
+            interromper seu fluxo de trabalho.
+          </p>
+          <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <a href="https://github.com/wJnk1831/Tarvos/releases/latest" target="_blank" rel="noopener"
+              class="btn-primary inline-flex min-w-48 items-center justify-center gap-2 rounded-xl px-5 py-3.5 text-sm font-semibold text-white">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 .8a11.2 11.2 0 0 0-3.54 21.83c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.62 1.22 3.26.93.1-.73.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.43.11-2.98 0 0 .95-.3 3.08 1.15a10.7 10.7 0 0 1 5.6 0c2.13-1.45 3.08-1.15 3.08-1.15.61 1.55.23 2.7.11 2.98.72.79 1.16 1.79 1.16 3.02 0 4.32-2.64 5.27-5.15 5.55.4.35.76 1.03.76 2.08v3.1c0 .3.2.65.78.54A11.2 11.2 0 0 0 12 .8Z" />
+              </svg>
+              Baixar Tarvos
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M7 17 17 7M7 7h10v10" />
+              </svg>
+            </a>
+            <a href="#como-funciona"
+              class="btn-secondary inline-flex min-w-48 items-center justify-center gap-2 rounded-xl border border-white/10 px-5 py-3.5 text-sm font-medium text-zinc-300">Conhecer
+              o funcionamento <span aria-hidden="true">↓</span></a>
+          </div>
+          <p class="mt-5 text-[11px] text-zinc-600">Gratuito · Windows 10+ · Processamento local</p>
+        </div>
+
+        <div class="reveal relative mx-auto mt-20 max-w-6xl sm:mt-24">
+          <div class="absolute -inset-8 -z-10 rounded-[40px] bg-orange-500/[.07] blur-3xl"></div>
+          <div class="glass overflow-hidden rounded-2xl p-2 sm:rounded-[22px] sm:p-3">
+            <div class="flex h-10 items-center justify-between border-b border-white/[.07] px-3 sm:px-5">
+              <div class="flex items-center gap-2">
+                <span class="h-2 w-2 rounded-full bg-[#ff6259]"></span><span
+                  class="h-2 w-2 rounded-full bg-[#ffbd44]"></span><span
+                  class="h-2 w-2 rounded-full bg-[#00ca70]"></span>
+                <span class="ml-3 text-[10px] tracking-wide text-zinc-600">TARVOS / CAPTURA DE TELA</span>
+              </div>
+              <span class="hidden text-[10px] text-zinc-600 sm:block">Prévia da interface</span>
+            </div>
+
+            <div class="relative overflow-hidden rounded-b-xl bg-[#0c0c0e]">
+              <video class="block w-full h-auto aspect-video object-contain" autoplay muted loop playsinline
+                preload="auto">
+                <source src="./assets/tarvos_demo_video.mp4" type="video/mp4">
+                Seu navegador não suporta reprodução de vídeo.
+              </video>
+            </div>
+
+            <!-- <div class="relative overflow-hidden rounded-b-xl bg-[#0c0c0e]">
+              <div class="absolute inset-0 grid-bg opacity-40"></div>
+              <div
+                class="relative grid min-h-[300px] grid-cols-1 gap-5 p-5 sm:min-h-[430px] sm:grid-cols-[1fr_230px] sm:p-8 lg:min-h-[500px] lg:grid-cols-[1fr_260px] lg:gap-8 lg:p-10">
+                <div class="relative flex min-h-[270px] items-center justify-center sm:min-h-0">
+                  <div
+                    class="absolute left-0 top-0 flex items-center gap-2 rounded-lg border border-white/10 bg-[#151517] px-3 py-2 text-[10px] text-zinc-300 shadow-xl">
+                    <span
+                      class="grid h-6 w-6 place-items-center rounded-md bg-orange-500/10 text-accent">⌗</span><span><b
+                        class="block text-[10px]">Tarvos</b><span class="text-zinc-600">Overlay de captura</span></span>
+                  </div>
+                  <div
+                    class="float absolute left-[4%] top-[22%] hidden w-[48%] rounded-xl bg-[#777779] p-6 shadow-2xl sm:block">
+                    <div class="mb-6 flex items-center justify-between">
+                      <div class="h-2 w-24 rounded bg-[#555558]"></div>
+                      <div class="h-5 w-5 rounded-full bg-[#a65c3c]"></div>
+                    </div>
+                    <div class="space-y-2">
+                      <div class="h-2.5 w-[82%] rounded bg-[#555558]"></div>
+                      <div class="h-2 w-full rounded bg-[#5d5d60]"></div>
+                      <div class="h-2 w-[92%] rounded bg-[#5d5d60]"></div>
+                      <div class="h-2 w-[68%] rounded bg-[#5d5d60]"></div>
+                    </div>
+                    <div class="mt-5 rounded-lg border border-black/10 p-3">
+                      <div class="h-2 w-[75%] rounded bg-[#555558]"></div>
+                      <div class="mt-2 h-2 w-[88%] rounded bg-[#555558]"></div>
+                    </div>
+                  </div>
+                  <div
+                    class="float-delayed absolute bottom-[8%] right-[2%] hidden w-[52%] rounded-xl bg-[#777779] p-6 shadow-2xl sm:block">
+                    <div class="mb-4 font-mono text-[9px] tracking-[.2em] text-[#444448]">DOCUMENT PREVIEW</div>
+                    <div class="space-y-2">
+                      <div class="h-2.5 w-[62%] rounded bg-[#555558]"></div>
+                      <div class="h-2 w-full rounded bg-[#5d5d60]"></div>
+                      <div class="h-2 w-[94%] rounded bg-[#5d5d60]"></div>
+                      <div class="h-2 w-[80%] rounded bg-[#5d5d60]"></div>
+                    </div>
+                    <div class="mt-5 h-14 rounded-md border border-black/10"></div>
+                  </div>
+                  <div
+                    class="relative z-10 w-full max-w-[370px] rounded-xl border border-white/10 bg-[#151517] p-4 shadow-2xl sm:absolute sm:bottom-3 sm:left-1/2 sm:w-[310px] sm:-translate-x-1/2">
+                    <div class="mb-3 flex items-center justify-between"><span
+                        class="text-[10px] font-semibold text-zinc-300">Texto reconhecido</span><span
+                        class="rounded-md bg-emerald-400/10 px-2 py-1 text-[9px] text-emerald-400">Concluído</span>
+                    </div>
+                    <p class="text-[11px] leading-5 text-zinc-400">O conhecimento começa quando observamos os detalhes
+                      que antes passavam despercebidos.</p>
+                    <div class="mt-4 flex items-center justify-between border-t border-white/[.07] pt-3"><span
+                        class="text-[9px] text-zinc-600">Português · Texto extraído</span><span
+                        class="flex items-center gap-1.5 text-[10px] text-accent">▣ Copiar texto</span></div>
+                  </div>
+                  <div
+                    class="absolute bottom-0 left-0 hidden items-center gap-2 rounded-lg border border-white/10 bg-[#151517] px-3 py-2 text-[10px] text-zinc-400 sm:flex">
+                    <span>◷</span> Histórico <span class="rounded bg-white/10 px-1.5 py-0.5">3</span>
+                  </div>
+                  <div
+                    class="absolute bottom-0 right-0 hidden items-center gap-2 rounded-lg border border-white/10 bg-[#151517] px-3 py-2 text-[9px] text-zinc-500 sm:flex">
+                    <span class="text-emerald-400">◉</span> Local · sem envio de imagem
+                  </div>
+                  <div class="scanline"></div>
+                </div>
+                <aside class="hidden space-y-3 sm:block">
+                  <div class="rounded-xl border border-white/[.08] bg-[#111113] p-4">
+                    <div class="mb-4 flex items-center gap-2 text-xs font-semibold"><span
+                        class="grid h-7 w-7 place-items-center rounded-lg bg-orange-500/10 text-accent">ϟ</span>Padrões
+                      de interação</div>
+                    <div class="space-y-3 text-[10px]">
+                      <div class="border-b border-white/[.06] pb-3"><span class="mr-2 font-mono text-accent">01</span>
+                        Atalho global<p class="ml-7 mt-1 text-zinc-600">Abra a camada de seleção</p>
+                      </div>
+                      <div class="border-b border-white/[.06] pb-3"><span class="mr-2 font-mono text-accent">02</span>
+                        Arraste e solte<p class="ml-7 mt-1 text-zinc-600">Defina a região do OCR</p>
+                      </div>
+                      <div class="border-b border-white/[.06] pb-3"><span class="mr-2 font-mono text-accent">03</span>
+                        Fechar por Esc<p class="ml-7 mt-1 text-zinc-600">Cancele o estado atual</p>
+                      </div>
+                      <div><span class="mr-2 font-mono text-accent">04</span> Texto pronto<p
+                          class="ml-7 mt-1 text-zinc-600">Copie e continue trabalhando</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="rounded-xl border border-white/[.08] bg-[#111113] p-4">
+                    <p class="mb-3 text-[9px] font-semibold tracking-[.18em] text-zinc-500">ATALHO ATIVO</p>
+                    <div class="flex items-center justify-between rounded-lg border border-white/[.07] p-3 text-[10px]">
+                      <span class="text-zinc-400">Captura rápida</span><span class="kbd">Ctrl+Shift+O</span>
+                    </div>
+                    <p class="mt-3 text-[9px] leading-4 text-zinc-600">Acione a captura sem tirar as mãos do teclado.
+                    </p>
+                  </div>
+                </aside>
+              </div>
+            </div> -->
+          </div>
+          <div class="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[10px] text-zinc-600"><span
+              class="flex items-center gap-2"><i class="h-1.5 w-1.5 rounded-full bg-accent"></i>Overlay de
+              captura</span><span class="flex items-center gap-2"><i
+                class="h-1.5 w-1.5 rounded-full bg-zinc-600"></i>Histórico de capturas</span><span
+              class="flex items-center gap-2"><i class="h-1.5 w-1.5 rounded-full bg-zinc-600"></i>Atalho global</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="como-funciona" class="border-y border-white/[.06] bg-[#0d0d0f] py-24 sm:py-28">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10">
+        <div class="reveal mb-14 max-w-2xl">
+          <p class="mb-4 font-mono text-[10px] uppercase tracking-[.22em] text-accent">Fluxo de trabalho</p>
+          <h2 class="text-3xl font-semibold tracking-[-.045em] sm:text-5xl">Três passos.</h2>
+          <p class="mt-5 max-w-xl text-sm leading-7 text-zinc-400">O Tarvos encurta o caminho entre encontrar um texto
+            na tela e utilizá-lo onde você precisa.</p>
+        </div>
+        <div class="grid gap-4 md:grid-cols-3">
+          <article class="feature-card reveal rounded-2xl border border-white/[.08] bg-white/[.02] p-7">
+            <div class="mb-10 flex items-center justify-between"><span class="font-mono text-xs text-accent">01 /
+                CAPTURAR</span><svg class="h-7 w-7 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.5">
+                <path
+                  d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2" />
+                <path d="M7 7h10v10H7z" stroke-dasharray="3 3" />
+              </svg></div>
+            <h3 class="text-lg font-semibold tracking-tight">Selecione uma região</h3>
+            <p class="mt-3 text-sm leading-6 text-zinc-500">Use o atalho global e marque a área da tela que contém o
+              texto. Pode ser uma imagem, vídeo, documento ou janela.</p>
+            <div class="mt-8 flex items-center gap-2 text-[10px] text-zinc-600"><span class="kbd">Ctrl</span><span
+                class="text-zinc-700">+</span><span class="kbd">Shift</span><span class="text-zinc-700">+</span><span
+                class="kbd">O</span></div>
+          </article>
+          <article class="feature-card reveal rounded-2xl border border-white/[.08] bg-white/[.02] p-7"
+            style="transition-delay:100ms">
+            <div class="mb-10 flex items-center justify-between"><span class="font-mono text-xs text-accent">02 /
+                RECONHECER</span><svg class="h-7 w-7 text-zinc-500" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="1.5">
+                <path
+                  d="M4 7V4a1 1 0 0 1 1-1h3M16 3h3a1 1 0 0 1 1 1v3M4 17v3a1 1 0 0 0 1 1h3M16 21h3a1 1 0 0 0 1-1v-3" />
+                <path d="M9 15V9M15 15V9M9 12h6" />
+              </svg></div>
+            <h3 class="text-lg font-semibold tracking-tight">Converta pixels em texto</h3>
+            <p class="mt-3 text-sm leading-6 text-zinc-500">O mecanismo de OCR analisa a captura e reconhece os
+              caracteres, sem exigir que você salve ou envie a imagem.</p>
+            <div class="mt-8 flex items-center gap-2 text-[10px] text-emerald-400"><span
+                class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>Processamento no dispositivo</div>
+          </article>
+          <article class="feature-card reveal rounded-2xl border border-white/[.08] bg-white/[.02] p-7"
+            style="transition-delay:200ms">
+            <div class="mb-10 flex items-center justify-between"><span class="font-mono text-xs text-accent">03 /
+                UTILIZAR</span><svg class="h-7 w-7 text-zinc-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="1.5">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                <rect x="8" y="2" width="8" height="4" rx="1" />
+                <path d="M9 12h6M9 16h4" />
+              </svg></div>
+            <h3 class="text-lg font-semibold tracking-tight">Copie e continue</h3>
+            <p class="mt-3 text-sm leading-6 text-zinc-500">O resultado fica pronto para a área de transferência. Cole
+              em um editor, navegador, planilha ou onde seu trabalho acontece.</p>
+            <div class="mt-8 flex items-center gap-2 text-[10px] text-zinc-600"><span class="text-accent">▣</span>Direto
+              para a área de transferência</div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="recursos" class="py-24 sm:py-28">
+      <div class="mx-auto max-w-7xl px-6 lg:px-10">
+        <div class="reveal mx-auto mb-14 max-w-2xl text-center">
+          <p class="mb-4 font-mono text-[10px] uppercase tracking-[.22em] text-accent">Feito para o uso diário</p>
+          <h2 class="text-3xl font-semibold tracking-[-.045em] sm:text-5xl">Pequeno no caminho.<br><span
+              class="text-zinc-500">Útil no resultado.</span></h2>
+          <p class="mt-5 text-sm leading-7 text-zinc-400">Uma ferramenta discreta que resolve uma tarefa específica — e
+            deixa você voltar ao que realmente importa.</p>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <article class="feature-card reveal rounded-2xl border border-white/[.08] p-6"><span
+              class="mb-7 grid h-10 w-10 place-items-center rounded-xl bg-orange-500/10 text-accent">⌘</span>
+            <h3 class="font-semibold">Atalho global</h3>
+            <p class="mt-2 text-sm leading-6 text-zinc-500">Inicie uma captura de qualquer aplicativo, sem procurar a
+              janela do Tarvos.</p>
+          </article>
+          <article class="feature-card reveal rounded-2xl border border-white/[.08] p-6" style="transition-delay:80ms">
+            <span class="mb-7 grid h-10 w-10 place-items-center rounded-xl bg-orange-500/10 text-accent">◷</span>
+            <h3 class="font-semibold">Histórico acessível</h3>
+            <p class="mt-2 text-sm leading-6 text-zinc-500">Consulte capturas anteriores sem precisar repetir o
+              processo.</p>
+          </article>
+          <article class="feature-card reveal rounded-2xl border border-white/[.08] p-6" style="transition-delay:160ms">
+            <span class="mb-7 grid h-10 w-10 place-items-center rounded-xl bg-orange-500/10 text-accent">文</span>
+            <h3 class="font-semibold">Multilíngue</h3>
+            <p class="mt-2 text-sm leading-6 text-zinc-500">Reconhecimento de texto em português, inglês, espanhol,
+              francês e ucraniano.</p>
+          </article>
+          <article class="feature-card reveal rounded-2xl border border-white/[.08] p-6" style="transition-delay:240ms">
+            <span class="mb-7 grid h-10 w-10 place-items-center rounded-xl bg-orange-500/10 text-accent">◈</span>
+            <h3 class="font-semibold">Leve e nativo</h3>
+            <p class="mt-2 text-sm leading-6 text-zinc-500">Construído com Tauri v2 para uma experiência desktop
+              compacta e integrada ao Windows.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="privacidade" class="border-y border-white/[.06] bg-[#0d0d0f] py-24 sm:py-28">
+      <div class="mx-auto grid max-w-7xl items-center gap-14 px-6 lg:grid-cols-[.9fr_1.1fr] lg:gap-24 lg:px-10">
+        <div class="reveal">
+          <p class="mb-4 font-mono text-[10px] uppercase tracking-[.22em] text-accent">Privacidade por padrão</p>
+          <h2 class="text-3xl font-semibold leading-tight tracking-[-.045em] sm:text-5xl">Sua tela é sua.<br><span
+              class="text-zinc-500">Seu texto também.</span></h2>
+          <p class="mt-6 text-sm leading-7 text-zinc-400">O reconhecimento acontece localmente, no próprio computador.
+            As imagens capturadas não precisam ser enviadas a um serviço remoto para que o texto seja extraído.</p>
+          <p class="mt-4 text-sm leading-7 text-zinc-500">Menos dependências externas. Mais controle sobre o conteúdo
+            que passa pela sua tela.</p>
+        </div>
+        <div class="reveal relative">
+          <div class="absolute -inset-8 rounded-full bg-emerald-500/[.06] blur-3xl"></div>
+          <div class="glass relative rounded-2xl p-7 sm:p-9">
+            <div class="flex items-center justify-between border-b border-white/[.08] pb-6">
+              <div class="flex items-center gap-3"><span
+                  class="grid h-10 w-10 place-items-center rounded-xl bg-emerald-400/10 text-emerald-400">⌑</span>
+                <div>
+                  <p class="text-sm font-semibold">Processamento local</p>
+                  <p class="mt-1 text-[10px] text-zinc-600">Arquitetura de execução</p>
+                </div>
+              </div><span
+                class="rounded-full border border-emerald-400/20 bg-emerald-400/[.07] px-3 py-1.5 text-[9px] text-emerald-400">NO
+                DISPOSITIVO</span>
+            </div>
+            <div class="space-y-5 py-7">
+              <div class="flex items-center gap-4"><span
+                  class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[.05] text-xs text-zinc-400">01</span>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">Captura da região</p>
+                  <p class="mt-1 text-[10px] text-zinc-600">A imagem é obtida na sua sessão do Windows.</p>
+                </div><span class="text-[10px] text-emerald-400">Local</span>
+              </div>
+              <div class="ml-4 h-5 border-l border-dashed border-white/10"></div>
+              <div class="flex items-center gap-4"><span
+                  class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[.05] text-xs text-zinc-400">02</span>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">Reconhecimento OCR</p>
+                  <p class="mt-1 text-[10px] text-zinc-600">O mecanismo processa a imagem no computador.</p>
+                </div><span class="text-[10px] text-emerald-400">Local</span>
+              </div>
+              <div class="ml-4 h-5 border-l border-dashed border-white/10"></div>
+              <div class="flex items-center gap-4"><span
+                  class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-white/[.05] text-xs text-zinc-400">03</span>
+                <div class="flex-1">
+                  <p class="text-xs font-medium">Texto na área de transferência</p>
+                  <p class="mt-1 text-[10px] text-zinc-600">O resultado fica pronto para você utilizar.</p>
+                </div><span class="text-[10px] text-emerald-400">Local</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 border-t border-white/[.08] pt-5 text-[10px] text-zinc-500"><span
+                class="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>Sem upload de imagem para processamento em nuvem.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="relative overflow-hidden py-24 sm:py-32">
+      <div
+        class="absolute left-1/2 top-1/2 -z-10 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-orange-500/[.08] blur-[110px]">
+      </div>
+      <div class="mx-auto max-w-4xl px-6 text-center">
+        <div class="reveal glass rounded-[28px] px-6 py-14 sm:px-14 sm:py-20">
+          <span
+            class="mx-auto mb-7 grid h-12 w-12 place-items-center rounded-2xl border border-orange-400/20 bg-orange-500/10 text-accent"><svg
+              class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+              <path d="M5 8V5h3M16 5h3v3M19 16v3h-3M8 19H5v-3" />
+              <path d="M8 8h8v8H8z" />
+            </svg></span>
+          <p class="mb-4 font-mono text-[10px] uppercase tracking-[.22em] text-accent">Comece agora</p>
+          <h2 class="text-3xl font-semibold tracking-[-.05em] sm:text-5xl">Pare de redigitar.<br><span
+              class="text-zinc-500">Comece a capturar.</span></h2>
+          <p class="mx-auto mt-5 max-w-lg text-sm leading-7 text-zinc-400">Tenha o Tarvos à mão e transforme qualquer
+            texto visível em conteúdo pronto para usar.</p>
+          <a href="https://github.com/wJnk1831/Tarvos/releases/latest" target="_blank" rel="noopener"
+            class="btn-primary mt-8 inline-flex items-center gap-2 rounded-xl px-6 py-3.5 text-sm font-semibold text-white">Baixar
+            para Windows <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M7 17 17 7M7 7h10v10" />
+            </svg></a>
+          <p class="mt-4 text-[10px] text-zinc-600">Gratuito e open source · Windows 10 ou superior · x64</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/[.07]">
+    <div
+      class="mx-auto flex max-w-7xl flex-col gap-6 px-6 py-8 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+      <div class="flex items-center gap-3"><img src="assets/icon.png" alt="" class="h-7 w-7 object-contain"
+          onerror="this.style.display='none'"><span class="text-sm font-bold">tarvos<span
+            class="text-accent">.</span></span><span class="text-[10px] text-zinc-600">© 2026 Projeto Tarvos · Tauri
+          v2</span></div>
+      <div class="flex gap-6 text-xs text-zinc-500"><a class="transition hover:text-white"
+          href="https://github.com/wJnk1831/Tarvos" target="_blank" rel="noopener">GitHub</a><a
+          class="transition hover:text-white" href="https://github.com/wJnk1831/Tarvos/releases" target="_blank"
+          rel="noopener">Releases</a></div>
+    </div>
+  </footer>
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+
+</html>
